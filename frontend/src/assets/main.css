@@ -312,6 +312,44 @@ select {
   color: var(--text-soft);
 }
 
+.install-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(10, 18, 32, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+.install-popup {
+  width: min(100%, 460px);
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.install-popup h3 {
+  margin: 10px 0 12px;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  line-height: 1.1;
+}
+
+.install-popup-text {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.install-popup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
 .eyebrow {
   margin: 0;
   text-transform: uppercase;
