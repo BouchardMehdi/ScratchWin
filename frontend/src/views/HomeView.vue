@@ -71,7 +71,12 @@ onBeforeUnmount(() => {
       </p>
       <div class="hero-actions">
         <RouterLink to="/auth" class="button button-primary">Commencer</RouterLink>
-        <button type="button" class="button button-primary" @click="installApp">
+        <button
+          v-if="!isStandalone"
+          type="button"
+          class="button button-primary"
+          @click="installApp"
+        >
           {{ canInstall ? "Telecharger l'app" : "Installer sur mobile" }}
         </button>
         <a href="#features" class="button button-muted">Voir le MVP</a>

@@ -728,6 +728,8 @@ select {
     gap: 4px;
     padding: 10px 8px;
     border-radius: 16px;
+    border: 0;
+    background: transparent;
     color: var(--text-soft);
   }
 
@@ -752,6 +754,10 @@ select {
   .mobile-nav-link.router-link-active .mobile-nav-icon-image {
     opacity: 1;
   }
+
+  .mobile-nav-button {
+    cursor: pointer;
+  }
 }
 
 @media (max-width: 640px) {
@@ -765,6 +771,10 @@ select {
   }
 
   .topbar-nav {
+    display: none;
+  }
+
+  .topbar-logout {
     display: none;
   }
 

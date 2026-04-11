@@ -54,7 +54,7 @@ async function logout() {
       <RouterLink v-if="!authStore.isAuthenticated" to="/auth" class="button button-primary">
         Connexion
       </RouterLink>
-      <button v-else type="button" class="button button-muted" @click="logout">
+      <button v-else type="button" class="button button-muted topbar-logout" @click="logout">
         Deconnexion
       </button>
     </div>
