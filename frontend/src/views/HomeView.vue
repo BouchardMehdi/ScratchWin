@@ -1,10 +1,63 @@
 <script setup>
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+
 const features = [
   "Inscription et connexion JWT",
   "5 tickets avec mecaniques distinctes",
   "Solde de credits mis a jour en direct",
   "Historique des parties cote utilisateur",
 ];
+
+const deferredInstallPrompt = ref(null);
+const installMessage = ref("");
+const isStandalone = ref(false);
+
+const canInstall = computed(() => Boolean(deferredInstallPrompt.value) && !isStandalone.value);
+
+function detectStandaloneMode() {
+  isStandalone.value =
+    window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function handleBeforeInstallPrompt(event) {
+  event.preventDefault();
+  deferredInstallPrompt.value = event;
+  installMessage.value = "";
+}
+
+function handleAppInstalled() {
+  deferredInstallPrompt.value = null;
+  isStandalone.value = true;
+  installMessage.value = "L'application est installee sur cet appareil.";
+}
+
+async function installApp() {
+  if (!deferredInstallPrompt.value) {
+    installMessage.value =
+      "Sur certains navigateurs, l'installation se fait depuis le menu du navigateur.";
+    return;
+  }
+
+  deferredInstallPrompt.value.prompt();
+  const choice = await deferredInstallPrompt.value.userChoice;
+
+  if (choice.outcome === "accepted") {
+    installMessage.value = "Installation lancee.";
+  }
+
+  deferredInstallPrompt.value = null;
+}
+
+onMounted(() => {
+  detectStandaloneMode();
+  window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+  window.addEventListener("appinstalled", handleAppInstalled);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+  window.removeEventListener("appinstalled", handleAppInstalled);
+});
 </script>
 
 <template>
@@ -18,8 +71,12 @@ const features = [
       </p>
       <div class="hero-actions">
         <RouterLink to="/auth" class="button button-primary">Commencer</RouterLink>
+        <button type="button" class="button button-primary" @click="installApp">
+          {{ canInstall ? "Telecharger l'app" : "Installer sur mobile" }}
+        </button>
         <a href="#features" class="button button-muted">Voir le MVP</a>
       </div>
+      <p v-if="installMessage" class="install-note">{{ installMessage }}</p>
     </div>
 
     <div class="hero-card">
@@ -46,4 +103,3 @@ const features = [
     </div>
   </section>
 </template>
-

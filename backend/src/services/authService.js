@@ -1,7 +1,10 @@
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import * as userModel from "../models/userModel.js";
-import { createToken } from "../utils/jwt.js";
+import * as refreshTokenModel from "../models/refreshTokenModel.js";
+import { createAccessToken } from "../utils/jwt.js";
 import { ApiError } from "../utils/apiError.js";
+import env from "../config/env.js";
 
 function sanitizeUser(user) {
   return {
@@ -14,9 +17,27 @@ function sanitizeUser(user) {
   };
 }
 
-function buildAuthResponse(user) {
+function hashToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+function buildRefreshTokenExpiry() {
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + env.refreshTokenExpiresDays);
+  return expiresAt;
+}
+
+async function buildAuthResponse(user) {
+  const refreshToken = crypto.randomBytes(48).toString("hex");
+  await refreshTokenModel.createRefreshToken({
+    userId: user.id,
+    tokenHash: hashToken(refreshToken),
+    expiresAt: buildRefreshTokenExpiry(),
+  });
+
   return {
-    token: createToken({ userId: user.id }),
+    token: createAccessToken({ userId: user.id }),
+    refreshToken,
     user: sanitizeUser(user),
   };
 }
@@ -52,7 +73,36 @@ export async function login({ emailOrUsername, password }) {
   return buildAuthResponse(user);
 }
 
+export async function refreshSession(refreshToken) {
+  if (!refreshToken) {
+    throw new ApiError(401, "Refresh token requis.");
+  }
+
+  const tokenHash = hashToken(refreshToken);
+  const storedToken = await refreshTokenModel.findValidByTokenHash(tokenHash);
+
+  if (!storedToken) {
+    throw new ApiError(401, "Refresh token invalide ou expire.");
+  }
+
+  const user = await userModel.findById(storedToken.userId);
+  if (!user) {
+    throw new ApiError(401, "Utilisateur introuvable.");
+  }
+
+  await refreshTokenModel.revokeByTokenHash(tokenHash);
+
+  return buildAuthResponse(user);
+}
+
+export async function logout(refreshToken) {
+  if (refreshToken) {
+    await refreshTokenModel.revokeByTokenHash(hashToken(refreshToken));
+  }
+
+  return { success: true };
+}
+
 export function getProfile(user) {
   return sanitizeUser(user);
 }
-

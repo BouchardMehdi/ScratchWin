@@ -1,0 +1,26 @@
+{
+  "name": "ScratchWin",
+  "short_name": "ScratchWin",
+  "description": "Une webapp de tickets a gratter rapide, jouable et installable.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffdf7",
+  "theme_color": "#0f766e",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

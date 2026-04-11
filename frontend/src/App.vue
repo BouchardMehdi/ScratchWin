@@ -7,9 +7,7 @@ import MobileNav from "./components/MobileNav.vue";
 const authStore = useAuthStore();
 
 onMounted(() => {
-  if (authStore.token && !authStore.user) {
-    authStore.fetchProfile().catch(() => {});
-  }
+  authStore.bootstrapSession().catch(() => {});
 });
 </script>
 

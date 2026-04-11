@@ -1,4 +1,4 @@
-import { verifyToken } from "../utils/jwt.js";
+import { verifyAccessToken } from "../utils/jwt.js";
 import { ApiError } from "../utils/apiError.js";
 import * as userModel from "../models/userModel.js";
 
@@ -11,7 +11,7 @@ export async function requireAuth(req, res, next) {
     }
 
     const token = header.replace("Bearer ", "");
-    const payload = verifyToken(token);
+    const payload = verifyAccessToken(token);
     const user = await userModel.findById(payload.userId);
 
     if (!user) {
@@ -24,4 +24,3 @@ export async function requireAuth(req, res, next) {
     next(error.statusCode ? error : new ApiError(401, "Token invalide ou expire."));
   }
 }
-

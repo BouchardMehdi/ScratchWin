@@ -85,6 +85,10 @@ select {
   gap: 12px;
 }
 
+.hero-actions {
+  flex-wrap: wrap;
+}
+
 .brand {
   gap: 14px;
 }
@@ -228,6 +232,11 @@ select {
 .hero-steps {
   margin: 18px 0 0;
   padding-left: 18px;
+}
+
+.install-note {
+  margin-top: 14px;
+  color: var(--text-soft);
 }
 
 .eyebrow {

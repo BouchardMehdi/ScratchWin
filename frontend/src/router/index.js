@@ -5,6 +5,7 @@ import DashboardView from "../views/DashboardView.vue";
 import TicketsView from "../views/TicketsView.vue";
 import ScratchView from "../views/ScratchView.vue";
 import HistoryView from "../views/HistoryView.vue";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../api/http";
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -29,13 +30,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  const token = localStorage.getItem("scratchwin_token");
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+  const hasSession = Boolean(token || refreshToken);
 
-  if (to.meta.requiresAuth && !token) {
+  if (to.meta.requiresAuth && !hasSession) {
     return { name: "auth" };
   }
 
-  if (to.meta.guestOnly && token) {
+  if (to.meta.guestOnly && hasSession) {
     return { name: "dashboard" };
   }
 
@@ -43,4 +46,3 @@ router.beforeEach((to) => {
 });
 
 export default router;
-

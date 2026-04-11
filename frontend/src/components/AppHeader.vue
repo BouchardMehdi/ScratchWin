@@ -16,8 +16,8 @@ const navLinks = computed(() =>
     : [{ label: "Accueil", to: "/" }],
 );
 
-function logout() {
-  authStore.logout();
+async function logout() {
+  await authStore.logout();
   router.push("/");
 }
 </script>

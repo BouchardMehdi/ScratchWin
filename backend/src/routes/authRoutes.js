@@ -32,7 +32,20 @@ router.post(
   authController.login,
 );
 
+router.post(
+  "/refresh",
+  [body("refreshToken").trim().notEmpty().withMessage("Refresh token requis.")],
+  validateRequest,
+  authController.refresh,
+);
+
+router.post(
+  "/logout",
+  [body("refreshToken").optional().isString().withMessage("Refresh token invalide.")],
+  validateRequest,
+  authController.logout,
+);
+
 router.get("/me", requireAuth, authController.me);
 
 export default router;
-

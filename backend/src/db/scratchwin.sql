@@ -2,6 +2,7 @@ CREATE DATABASE IF NOT EXISTS scratchwin CHARACTER SET utf8mb4 COLLATE utf8mb4_u
 USE scratchwin;
 
 DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS ticket_rewards;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS users;
@@ -65,6 +66,21 @@ CREATE TABLE games (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
   CONSTRAINT fk_games_ticket
     FOREIGN KEY (ticket_id) REFERENCES tickets (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE refresh_tokens (
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  token_hash VARCHAR(64) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  revoked_at DATETIME DEFAULT NULL,
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_refresh_tokens_token_hash (token_hash),
+  KEY idx_refresh_tokens_user_id (user_id),
+  KEY idx_refresh_tokens_expires_at (expires_at),
+  CONSTRAINT fk_refresh_tokens_user
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO tickets (id, name, slug, price, max_reward, win_probability, ticket_type, description, is_active)
