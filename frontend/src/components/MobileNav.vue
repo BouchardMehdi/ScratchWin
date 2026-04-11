@@ -7,13 +7,13 @@ const authStore = useAuthStore();
 const navItems = computed(() =>
   authStore.isAuthenticated
     ? [
-        { label: "Accueil", icon: "🏠", to: "/dashboard" },
-        { label: "Tickets", icon: "🎟", to: "/tickets" },
-        { label: "Historique", icon: "🕘", to: "/history" },
+        { label: "Accueil", icon: "/mobile-nav/home.png", to: "/dashboard" },
+        { label: "Tickets", icon: "/mobile-nav/card.png", to: "/tickets" },
+        { label: "Historique", icon: "/mobile-nav/historique.png", to: "/history" },
       ]
     : [
-        { label: "Accueil", icon: "🏠", to: "/" },
-        { label: "Connexion", icon: "🔐", to: "/auth" },
+        { label: "Accueil", icon: "/mobile-nav/home.png", to: "/" },
+        { label: "Connexion", icon: "/mobile-nav/home.png", to: "/auth" },
       ],
 );
 </script>
@@ -26,7 +26,7 @@ const navItems = computed(() =>
       :to="item.to"
       class="mobile-nav-link"
     >
-      <span class="mobile-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+      <img class="mobile-nav-icon-image" :src="item.icon" :alt="item.label" />
       <span class="mobile-nav-label">{{ item.label }}</span>
     </RouterLink>
   </nav>

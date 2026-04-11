@@ -453,12 +453,50 @@ select {
 .stat-highlight {
   min-width: 260px;
   text-align: right;
+  align-self: start;
 }
 
 .stat-highlight strong {
   display: block;
   margin-top: 8px;
   font-size: 2rem;
+}
+
+.stat-label {
+  display: block;
+}
+
+.stat-subtitle {
+  margin: 10px 0 0;
+  color: var(--text-soft);
+}
+
+.stat-meta {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stat-meta div {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(16, 36, 62, 0.05);
+}
+
+.stat-meta small {
+  display: block;
+  color: var(--text-soft);
+}
+
+.stat-meta b {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.95rem;
+}
+
+.dashboard-quick-grid {
+  margin-top: 18px;
 }
 
 .scratch-layout {
@@ -689,14 +727,21 @@ select {
     color: var(--primary-dark);
   }
 
-  .mobile-nav-icon {
-    font-size: 1.15rem;
+  .mobile-nav-icon-image {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    opacity: 0.72;
   }
 
   .mobile-nav-label {
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.03em;
+  }
+
+  .mobile-nav-link.router-link-active .mobile-nav-icon-image {
+    opacity: 1;
   }
 }
 
@@ -716,6 +761,10 @@ select {
 
   .feature-grid,
   .ticket-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-meta {
     grid-template-columns: 1fr;
   }
 }
