@@ -1,0 +1,8 @@
+{
+  "name": "scratchwin",
+  "private": true,
+  "scripts": {
+    "build:front": "npm --prefix frontend run build",
+    "deploy:front": "npm run build:front && node backend/scripts/syncFrontendBuild.js"
+  }
+}

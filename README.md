@@ -140,6 +140,7 @@ ScratchWin/
 |-- backend/
 |   |-- .env.example
 |   |-- package.json
+|   |-- public/
 |   `-- src/
 |       |-- app.js
 |       |-- server.js
@@ -175,6 +176,7 @@ ScratchWin/
 |           `-- pickWeightedReward.js
 |-- frontend/
 |   |-- .env.example
+|   |-- .env.production
 |   |-- index.html
 |   |-- package.json
 |   |-- vite.config.js
@@ -258,7 +260,7 @@ Exemple de fichier `backend/.env`:
 
 ```env
 PORT=4000
-CLIENT_URL=http://localhost:5173
+CLIENT_URL=http://localhost:4000
 DB_HOST=127.0.0.1
 DB_PORT=3308
 DB_USER=root
@@ -275,6 +277,12 @@ Exemple de fichier `frontend/.env`:
 
 ```env
 VITE_API_BASE_URL=http://localhost:4000/api
+```
+
+En production, le frontend utilise `frontend/.env.production` avec:
+
+```env
+VITE_API_BASE_URL=/api
 ```
 
 ## Installation et lancement
@@ -321,6 +329,26 @@ npm run dev
 Par defaut:
 
 - frontend sur `http://localhost:5173`
+
+### 5. Preparer le build Hostinger
+
+Depuis `backend/`:
+
+```bash
+npm run build
+```
+
+Cette commande:
+
+- build le frontend Vue
+- copie `frontend/dist` dans `backend/public`
+- prepare le backend pour servir aussi l'application Vue en production
+
+Avec cette configuration:
+
+- `GET /api/*` reste gere par Express
+- toute autre route charge l'application Vue
+- le refresh navigateur sur `/dashboard`, `/tickets` ou `/history` fonctionne
 
 ## Mode PWA
 
@@ -390,6 +418,7 @@ Ce projet est utile pour apprendre ou montrer:
 - la gestion d'une interface responsive
 - la creation d'une petite PWA installable
 - une logique metier centralisee cote serveur
+- un deploiement full-stack simple sur un seul domaine via `backend/public`
 
 ## Pistes d'amelioration
 
