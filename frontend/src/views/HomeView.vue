@@ -79,7 +79,6 @@ onBeforeUnmount(() => {
         >
           {{ canInstall ? "Telecharger l'app" : "Installer sur mobile" }}
         </button>
-        <a href="#features" class="button button-muted">Voir le MVP</a>
       </div>
       <p v-if="installMessage" class="install-note">{{ installMessage }}</p>
     </div>

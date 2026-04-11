@@ -1,12 +1,9 @@
 :root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #10243e;
-  background:
-    radial-gradient(circle at top, rgba(255, 214, 102, 0.35), transparent 30%),
-    linear-gradient(180deg, #fffdf7 0%, #eef4fb 100%);
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light;
+  --text-main: #10243e;
   --surface: rgba(255, 255, 255, 0.82);
   --border: rgba(16, 36, 62, 0.12);
   --shadow: 0 18px 45px rgba(16, 36, 62, 0.08);
@@ -16,7 +13,81 @@
   --text-soft: #5b6b82;
   --success: #0d8b54;
   --danger: #b42318;
+  --page-background:
+    radial-gradient(circle at top, rgba(255, 214, 102, 0.35), transparent 30%),
+    linear-gradient(180deg, #fffdf7 0%, #eef4fb 100%);
+  --topbar-bg: rgba(255, 253, 247, 0.9);
+  --nav-active-bg: rgba(15, 118, 110, 0.1);
+  --credits-bg: rgba(255, 209, 102, 0.24);
+  --button-muted-bg: rgba(16, 36, 62, 0.06);
+  --button-muted-color: #10243e;
+  --surface-soft: rgba(255, 255, 255, 0.58);
+  --surface-soft-border: rgba(16, 36, 62, 0.08);
+  --surface-soft-strong: rgba(255, 255, 255, 0.76);
+  --surface-list: rgba(255, 255, 255, 0.6);
+  --panel-subtle: rgba(16, 36, 62, 0.04);
+  --panel-subtle-strong: rgba(16, 36, 62, 0.05);
+  --input-bg: rgba(255, 255, 255, 0.94);
+  --tab-bg: rgba(16, 36, 62, 0.06);
+  --tab-active-bg: rgba(240, 90, 40, 0.14);
+  --error-bg: rgba(180, 35, 24, 0.08);
+  --mobile-nav-bg: rgba(255, 253, 247, 0.92);
+  --mobile-nav-border: rgba(16, 36, 62, 0.08);
+  --mobile-nav-shadow: 0 16px 40px rgba(16, 36, 62, 0.16);
+  --ticket-flash-bg: linear-gradient(180deg, rgba(255, 225, 176, 0.9), rgba(255, 255, 255, 0.9));
+  --ticket-fortune-bg: linear-gradient(180deg, rgba(204, 240, 223, 0.9), rgba(255, 255, 255, 0.9));
+  --ticket-jackpot-bg: linear-gradient(180deg, rgba(255, 210, 210, 0.9), rgba(255, 255, 255, 0.9));
+  --ticket-mystere-bg: linear-gradient(180deg, rgba(220, 221, 255, 0.9), rgba(255, 255, 255, 0.9));
+  --ticket-lucky-bg: linear-gradient(180deg, rgba(223, 255, 231, 0.9), rgba(255, 255, 255, 0.9));
+  --scratch-shell-bg:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.82), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(235, 240, 247, 0.96));
+  --scratch-shell-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -8px 18px rgba(159, 170, 188, 0.18);
   --coin-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Ccircle cx='17' cy='17' r='13' fill='%23ffd166' stroke='%23bc7c09' stroke-width='2'/%3E%3Ccircle cx='17' cy='17' r='9' fill='none' stroke='%23fff2ba' stroke-width='2'/%3E%3Cpath d='M13 17h8M17 13v8' stroke='%23855b00' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 17 17, auto;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --text-main: #e9f1ff;
+  --surface: rgba(15, 23, 42, 0.82);
+  --border: rgba(148, 163, 184, 0.18);
+  --shadow: 0 18px 45px rgba(2, 6, 23, 0.42);
+  --text-soft: #9fb0c9;
+  --page-background:
+    radial-gradient(circle at top, rgba(240, 90, 40, 0.16), transparent 24%),
+    linear-gradient(180deg, #07111f 0%, #0b1728 100%);
+  --topbar-bg: rgba(7, 17, 31, 0.9);
+  --nav-active-bg: rgba(94, 234, 212, 0.12);
+  --credits-bg: rgba(240, 180, 41, 0.18);
+  --button-muted-bg: rgba(148, 163, 184, 0.12);
+  --button-muted-color: #e9f1ff;
+  --surface-soft: rgba(15, 23, 42, 0.62);
+  --surface-soft-border: rgba(148, 163, 184, 0.16);
+  --surface-soft-strong: rgba(30, 41, 59, 0.82);
+  --surface-list: rgba(15, 23, 42, 0.72);
+  --panel-subtle: rgba(148, 163, 184, 0.08);
+  --panel-subtle-strong: rgba(148, 163, 184, 0.1);
+  --input-bg: rgba(15, 23, 42, 0.92);
+  --tab-bg: rgba(148, 163, 184, 0.12);
+  --tab-active-bg: rgba(240, 90, 40, 0.18);
+  --error-bg: rgba(180, 35, 24, 0.16);
+  --mobile-nav-bg: rgba(7, 17, 31, 0.94);
+  --mobile-nav-border: rgba(148, 163, 184, 0.14);
+  --mobile-nav-shadow: 0 16px 40px rgba(2, 6, 23, 0.45);
+  --mobile-nav-icon-filter: brightness(0) invert(1);
+  --ticket-flash-bg: linear-gradient(180deg, rgba(109, 76, 18, 0.82), rgba(15, 23, 42, 0.86));
+  --ticket-fortune-bg: linear-gradient(180deg, rgba(11, 93, 76, 0.82), rgba(15, 23, 42, 0.86));
+  --ticket-jackpot-bg: linear-gradient(180deg, rgba(122, 44, 56, 0.82), rgba(15, 23, 42, 0.86));
+  --ticket-mystere-bg: linear-gradient(180deg, rgba(62, 55, 128, 0.82), rgba(15, 23, 42, 0.86));
+  --ticket-lucky-bg: linear-gradient(180deg, rgba(29, 94, 61, 0.82), rgba(15, 23, 42, 0.86));
+  --scratch-shell-bg:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(71, 85, 105, 0.96), rgba(30, 41, 59, 0.96));
+  --scratch-shell-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -8px 18px rgba(2, 6, 23, 0.36);
 }
 
 * {
@@ -32,6 +103,8 @@ body,
 
 body {
   min-width: 320px;
+  color: var(--text-main);
+  background: var(--page-background);
 }
 
 a {
@@ -69,7 +142,7 @@ select {
   gap: 20px;
   padding: 16px 20px;
   backdrop-filter: blur(14px);
-  background: rgba(255, 253, 247, 0.9);
+  background: var(--topbar-bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -128,7 +201,7 @@ select {
 }
 
 .nav-link.router-link-active {
-  background: rgba(15, 118, 110, 0.1);
+  background: var(--nav-active-bg);
   color: var(--secondary);
 }
 
@@ -144,7 +217,7 @@ select {
 }
 
 .credits-pill {
-  background: rgba(255, 209, 102, 0.24);
+  background: var(--credits-bg);
 }
 
 .button {
@@ -171,8 +244,8 @@ select {
 }
 
 .button-muted {
-  background: rgba(16, 36, 62, 0.06);
-  color: #10243e;
+  background: var(--button-muted-bg);
+  color: var(--button-muted-color);
 }
 
 .hero,
@@ -297,8 +370,8 @@ select {
 .ticket-rule-box {
   padding: 14px 16px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.58);
-  border: 1px solid rgba(16, 36, 62, 0.08);
+  background: var(--surface-soft);
+  border: 1px solid var(--surface-soft-border);
 }
 
 .ticket-rule-text,
@@ -322,9 +395,9 @@ select {
   align-items: center;
   justify-content: center;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(16, 36, 62, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: var(--surface-soft-strong);
+  border: 1px solid var(--surface-soft-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .symbol-small {
@@ -360,7 +433,7 @@ select {
 .ticket-stats div {
   padding: 12px;
   border-radius: 16px;
-  background: rgba(16, 36, 62, 0.04);
+  background: var(--panel-subtle);
 }
 
 .ticket-stats dt {
@@ -387,27 +460,27 @@ select {
   gap: 12px;
   padding: 10px 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--surface-list);
 }
 
 .ticket-flash {
-  background: linear-gradient(180deg, rgba(255, 225, 176, 0.9), rgba(255, 255, 255, 0.9));
+  background: var(--ticket-flash-bg);
 }
 
 .ticket-fortune {
-  background: linear-gradient(180deg, rgba(204, 240, 223, 0.9), rgba(255, 255, 255, 0.9));
+  background: var(--ticket-fortune-bg);
 }
 
 .ticket-jackpot {
-  background: linear-gradient(180deg, rgba(255, 210, 210, 0.9), rgba(255, 255, 255, 0.9));
+  background: var(--ticket-jackpot-bg);
 }
 
 .ticket-mystere {
-  background: linear-gradient(180deg, rgba(220, 221, 255, 0.9), rgba(255, 255, 255, 0.9));
+  background: var(--ticket-mystere-bg);
 }
 
 .ticket-lucky {
-  background: linear-gradient(180deg, rgba(223, 255, 231, 0.9), rgba(255, 255, 255, 0.9));
+  background: var(--ticket-lucky-bg);
 }
 
 .form-grid {
@@ -428,7 +501,8 @@ select {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--input-bg);
+  color: var(--text-main);
 }
 
 .auth-tabs {
@@ -442,19 +516,20 @@ select {
   padding: 12px;
   border-radius: 14px;
   border: 0;
-  background: rgba(16, 36, 62, 0.06);
+  background: var(--tab-bg);
+  color: var(--text-main);
   cursor: pointer;
 }
 
 .tab-button.active {
-  background: rgba(240, 90, 40, 0.14);
+  background: var(--tab-active-bg);
   color: var(--primary-dark);
   font-weight: 700;
 }
 
 .form-error {
   color: var(--danger);
-  background: rgba(180, 35, 24, 0.08);
+  background: var(--error-bg);
   padding: 12px 14px;
   border-radius: 14px;
 }
@@ -490,7 +565,7 @@ select {
 .stat-meta div {
   padding: 12px;
   border-radius: 16px;
-  background: rgba(16, 36, 62, 0.05);
+  background: var(--panel-subtle-strong);
 }
 
 .stat-meta small {
@@ -532,13 +607,9 @@ select {
   position: relative;
   min-height: 128px;
   border-radius: 20px;
-  border: 1px solid rgba(16, 36, 62, 0.12);
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.82), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(235, 240, 247, 0.96));
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.75),
-    inset 0 -8px 18px rgba(159, 170, 188, 0.18);
+  border: 1px solid var(--border);
+  background: var(--scratch-shell-bg);
+  box-shadow: var(--scratch-shell-shadow);
   overflow: hidden;
 }
 
@@ -622,7 +693,7 @@ select {
   margin-top: 18px;
   padding: 18px;
   border-radius: 18px;
-  background: rgba(16, 36, 62, 0.05);
+  background: var(--panel-subtle-strong);
 }
 
 .result-banner.win {
@@ -662,8 +733,51 @@ select {
   padding: 18px 20px;
   margin-bottom: 18px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface-list);
   border: 1px solid var(--border);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--button-muted-bg);
+  border: 1px solid var(--surface-soft-border);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd166, #f05a28);
+  transition: transform 0.18s ease;
+}
+
+.theme-toggle-thumb.dark {
+  transform: translateX(18px);
+  background: linear-gradient(135deg, #8ec5ff, #4f46e5);
+}
+
+.theme-toggle-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
 }
 
 .placeholder-panel {
@@ -716,10 +830,10 @@ select {
     gap: 10px;
     padding: 10px;
     border-radius: 22px;
-    background: rgba(255, 253, 247, 0.92);
+    background: var(--mobile-nav-bg);
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(16, 36, 62, 0.08);
-    box-shadow: 0 16px 40px rgba(16, 36, 62, 0.16);
+    border: 1px solid var(--mobile-nav-border);
+    box-shadow: var(--mobile-nav-shadow);
   }
 
   .mobile-nav-link {
@@ -734,7 +848,7 @@ select {
   }
 
   .mobile-nav-link.router-link-active {
-    background: rgba(240, 90, 40, 0.12);
+    background: var(--tab-active-bg);
     color: var(--primary-dark);
   }
 
@@ -743,6 +857,7 @@ select {
     height: 22px;
     object-fit: contain;
     opacity: 0.72;
+    filter: var(--mobile-nav-icon-filter, none);
   }
 
   .mobile-nav-label {
@@ -784,6 +899,14 @@ select {
 
   .brand-logo {
     width: 92px;
+  }
+
+  .theme-toggle {
+    padding-inline: 10px;
+  }
+
+  .theme-toggle-label {
+    display: none;
   }
 
   .feature-grid,

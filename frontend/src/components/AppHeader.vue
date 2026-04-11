@@ -2,9 +2,11 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+import { useThemeStore } from "../stores/theme";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const themeStore = useThemeStore();
 
 const navLinks = computed(() =>
   authStore.isAuthenticated
@@ -48,6 +50,17 @@ async function logout() {
     </nav>
 
     <div class="topbar-actions">
+      <button
+        type="button"
+        class="theme-toggle"
+        @click="themeStore.toggleTheme()"
+        :aria-label="themeStore.theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'"
+      >
+        <span class="theme-toggle-track">
+          <span class="theme-toggle-thumb" :class="{ dark: themeStore.theme === 'dark' }" />
+        </span>
+        <span class="theme-toggle-label">{{ themeStore.theme === "dark" ? "Dark" : "Light" }}</span>
+      </button>
       <div v-if="authStore.user" class="credits-pill">
         {{ authStore.user.credits.toFixed(2) }} credits
       </div>
