@@ -332,10 +332,10 @@ Par defaut:
 
 ### 5. Preparer le build Hostinger
 
-Depuis `backend/`:
+Depuis `frontend/`:
 
 ```bash
-npm run build
+npm run deploy:front
 ```
 
 Cette commande:
