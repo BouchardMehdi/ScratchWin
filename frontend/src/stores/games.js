@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { apiFetch } from "../api/http";
 import { useAuthStore } from "./auth";
+import { pinia } from "./pinia";
 
 export const useGamesStore = defineStore("games", {
   state: () => ({
@@ -26,7 +27,7 @@ export const useGamesStore = defineStore("games", {
         this.currentGame = response;
         this.history = [response.game, ...this.history].slice(0, 50);
 
-        const authStore = useAuthStore();
+        const authStore = useAuthStore(pinia);
         authStore.user = response.user;
 
         return response;
