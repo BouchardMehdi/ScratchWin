@@ -66,8 +66,8 @@ onBeforeUnmount(() => {
       <p class="eyebrow">Projet portfolio friendly</p>
       <h1>Une petite webapp full-stack de tickets a gratter, simple et propre.</h1>
       <p class="hero-text">
-        ScratchWin est pense comme un MVP pedagogique pour apprendre Express, Vue 3, Pinia,
-        Vue Router et MySQL sans tomber dans l'overengineering.
+        Projet realise avec Node.js, Express, Vue 3, Vue Router, Pinia, MySQL et une
+        configuration PWA installable.
       </p>
       <div class="hero-actions">
         <RouterLink to="/auth" class="button button-primary">Commencer</RouterLink>

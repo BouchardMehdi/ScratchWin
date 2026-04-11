@@ -13,7 +13,7 @@ const navLinks = computed(() =>
         { label: "Tickets", to: "/tickets" },
         { label: "Historique", to: "/history" },
       ]
-    : [{ label: "Accueil", to: "/" }],
+    : [],
 );
 
 async function logout() {
@@ -36,7 +36,7 @@ async function logout() {
       </div>
     </RouterLink>
 
-    <nav class="topbar-nav">
+    <nav v-if="navLinks.length" class="topbar-nav">
       <RouterLink
         v-for="link in navLinks"
         :key="link.to"

@@ -7,13 +7,14 @@ const authStore = useAuthStore();
 const navItems = computed(() =>
   authStore.isAuthenticated
     ? [
-        { label: "Accueil", icon: "/mobile-nav/home.png", to: "/dashboard" },
+        { label: "Home", icon: "/mobile-nav/home.png", to: "/" },
+        { label: "Dashboard", icon: "/mobile-nav/dashboard.png", to: "/dashboard" },
         { label: "Tickets", icon: "/mobile-nav/card.png", to: "/tickets" },
         { label: "Historique", icon: "/mobile-nav/historique.png", to: "/history" },
       ]
     : [
-        { label: "Accueil", icon: "/mobile-nav/home.png", to: "/" },
-        { label: "Connexion", icon: "/mobile-nav/home.png", to: "/auth" },
+        { label: "Home", icon: "/mobile-nav/home.png", to: "/" },
+        { label: "Connexion", icon: "/mobile-nav/enter.png", to: "/auth" },
       ],
 );
 </script>
