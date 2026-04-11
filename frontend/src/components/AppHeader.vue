@@ -25,7 +25,11 @@ function logout() {
 <template>
   <header class="topbar">
     <RouterLink to="/" class="brand">
-      <span class="brand-mark">S</span>
+      <img
+        src="/branding/scratchwin-logo.png"
+        alt="ScratchWin"
+        class="brand-logo"
+      />
       <div>
         <strong>ScratchWin</strong>
         <p>Tickets a gratter en Vue + Express</p>
@@ -56,4 +60,3 @@ function logout() {
     </div>
   </header>
 </template>
-

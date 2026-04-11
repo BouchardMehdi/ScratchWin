@@ -94,6 +94,10 @@ select {
   margin: 0;
 }
 
+.brand strong {
+  font-size: 1.05rem;
+}
+
 .brand p,
 .hero-copy p,
 .auth-intro p,
@@ -106,15 +110,11 @@ select {
   color: var(--text-soft);
 }
 
-.brand-mark {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ffd166, #f05a28);
-  color: white;
-  font-weight: 700;
+.brand-logo {
+  width: 124px;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .nav-link {
@@ -452,7 +452,7 @@ select {
 
 .stat-highlight {
   min-width: 260px;
-  text-align: right;
+  text-align: left;
   align-self: start;
 }
 
@@ -757,6 +757,14 @@ select {
 
   .topbar-nav {
     display: none;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-logo {
+    width: 92px;
   }
 
   .feature-grid,
