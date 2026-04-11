@@ -344,6 +344,12 @@ Cette commande:
 - copie `frontend/dist` dans `backend/public`
 - prepare le backend pour servir aussi l'application Vue en production
 
+Important pour Hostinger:
+
+- Hostinger ne doit pas builder le frontend avec Vite depuis `backend/`
+- le frontend doit deja etre present dans `backend/public` avant le push
+- le script `npm run build` de `backend/` ne fait qu'une verification de presence de `backend/public/index.html`
+
 Avec cette configuration:
 
 - `GET /api/*` reste gere par Express
