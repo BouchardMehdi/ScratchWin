@@ -1,5 +1,8 @@
-node_modules/
-dist/
-.env
+front/node_modules/
+front/dist/
+back/node_modules/
+front/.env
+back/.env
 .DS_Store
-
+npm-debug.log
+docker-data/
