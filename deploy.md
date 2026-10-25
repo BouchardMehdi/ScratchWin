@@ -32,7 +32,7 @@ NODE_ENV=production
 PROJECT_SLUG=scratchwin
 CORS_ORIGINS=https://example.com
 TRUST_PROXY=1
-DB_HOST=127.0.0.1
+DB_HOST=db
 DB_PORT=3306
 DB_USER=scratchwin
 DB_PASSWORD=change_me
@@ -56,8 +56,16 @@ Par defaut:
 Depuis la racine du projet:
 
 ```bash
-docker compose up -d --build
+docker compose --env-file back/.env up -d --build
 ```
+
+MySQL 8.4 est lance avec les autres services. Compose utilise la base et
+l'utilisateur `scratchwin`, avec `DB_PASSWORD` issu de `back/.env`.
+Le backend attend que la base soit initialisee et accessible avant de demarrer.
+Le script `back/src/db/scratchwin.sql` s'execute uniquement lors de la creation
+du volume vide. Les donnees restent dans le volume `mysql_data` ; ne pas utiliser
+`docker compose down -v` pour un arret normal. Une ancienne base externe doit
+etre migree separement si ses donnees doivent etre conservees.
 
 ## 4. Ports exposes localement
 
@@ -92,7 +100,7 @@ server {
     }
 
     location /scratchwin/ {
-        proxy_pass http://127.0.0.1:4173/;
+        proxy_pass http://127.0.0.1:4173;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -119,7 +127,7 @@ Quand tu mets le projet a jour:
 ```bash
 cd /home/projects/scratchwin
 git pull
-docker compose up -d --build
+docker compose --env-file back/.env up -d --build
 ```
 
 ## Notes importantes

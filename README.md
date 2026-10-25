@@ -21,7 +21,7 @@ ScratchWin/
 - le frontend est pense pour etre servi sous `/scratchwin/`
 - l'API est pensee pour etre servie sous `/scratchwin/api/`
 - le reverse proxy principal est Nginx sur le VPS
-- Docker est utilise pour lancer un conteneur frontend et un conteneur backend
+- Docker lance le frontend, le backend et MySQL 8.4
 
 ## Frontend
 
@@ -66,11 +66,31 @@ En developpement:
 
 ## Lancement avec Docker
 
-Depuis la racine:
+Depuis la racine, avec Docker Desktop demarre et `DB_PASSWORD` renseigne dans `back/.env`:
 
 ```bash
-docker compose up -d --build
+docker compose --env-file back/.env up -d --build
 ```
+
+Ouvrir ensuite <http://localhost:4173/scratchwin/>.
+
+Compose configure le backend pour joindre `db:3306`, avec la base et l'utilisateur
+`scratchwin`, et reutilise `DB_PASSWORD` de `back/.env` pour MySQL et l'API.
+Ces parametres remplacent les valeurs `DB_HOST`, `DB_PORT`, `DB_NAME` et `DB_USER`
+du fichier pour le backend Docker uniquement.
+
+La base est initialisee automatiquement avec `back/src/db/scratchwin.sql` au
+premier demarrage sur un volume vide. Les donnees sont conservees dans le volume
+`mysql_data` lors des redemarrages et reconstructions. MySQL n'expose aucun port sur l'hote.
+Une base MySQL existante hors Docker n'est pas importee automatiquement.
+
+Pour arreter les services en conservant les donnees:
+
+```bash
+docker compose --env-file back/.env down
+```
+
+Ne pas ajouter `-v` a cette commande pour conserver les donnees.
 
 Ports exposes localement par Docker:
 
