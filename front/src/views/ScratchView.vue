@@ -11,6 +11,7 @@ const route = useRoute();
 const gamesStore = useGamesStore();
 const ticketsStore = useTicketsStore();
 const errorMessage = ref("");
+const loading = ref(true);
 
 const ticket = computed(() => ticketsStore.byId(route.params.id));
 const ticketUi = computed(() => (ticket.value ? getTicketUi(ticket.value.slug) : null));
@@ -24,7 +25,13 @@ watch(
 );
 
 onMounted(async () => {
-  await ticketsStore.fetchTickets();
+  try {
+    await ticketsStore.fetchTickets();
+  } catch (error) {
+    errorMessage.value = error.message;
+  } finally {
+    loading.value = false;
+  }
 });
 
 async function play() {
@@ -40,7 +47,9 @@ async function play() {
 
 <template>
   <section class="section-block">
-    <div v-if="ticket" class="scratch-layout">
+    <p v-if="loading" class="empty-state" role="status">Chargement du ticket...</p>
+    <p v-else-if="!ticket" class="form-error" role="alert">{{ errorMessage || "Ce ticket est introuvable." }}</p>
+    <div v-else class="scratch-layout">
       <div class="scratch-sidebar">
         <p class="eyebrow">Ticket selectionne</p>
         <h1>{{ ticket.name }}</h1>

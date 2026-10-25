@@ -6,3 +6,4 @@ back/.env
 .DS_Store
 npm-debug.log
 docker-data/
+.local-backups/

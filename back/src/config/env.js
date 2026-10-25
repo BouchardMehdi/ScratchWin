@@ -13,7 +13,7 @@ const env = {
   projectSlug: process.env.PROJECT_SLUG || "scratchwin",
   corsOrigins,
   trustProxy: Number(process.env.TRUST_PROXY || 0),
-  jwtSecret: process.env.JWT_SECRET || "change_this_secret",
+  jwtSecret: process.env.JWT_SECRET || "development_only_change_this_secret",
   accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || "2h",
   refreshTokenExpiresDays: Number(process.env.REFRESH_TOKEN_EXPIRES_DAYS || 30),
   db: {
@@ -24,5 +24,16 @@ const env = {
     database: process.env.DB_NAME || "scratchwin",
   },
 };
+
+if (env.nodeEnv === "production" && (
+  !process.env.JWT_SECRET ||
+  Buffer.byteLength(env.jwtSecret) < 32 ||
+  /change[_ -]?(this|me)|development_only/i.test(env.jwtSecret)
+)) {
+  throw new Error("JWT_SECRET doit etre un secret aleatoire d'au moins 32 octets en production.");
+}
+if (!Number.isInteger(env.refreshTokenExpiresDays) || env.refreshTokenExpiresDays < 1) {
+  throw new Error("REFRESH_TOKEN_EXPIRES_DAYS doit etre un entier positif.");
+}
 
 export default env;

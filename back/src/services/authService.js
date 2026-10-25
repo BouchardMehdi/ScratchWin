@@ -5,6 +5,7 @@ import * as refreshTokenModel from "../models/refreshTokenModel.js";
 import { createAccessToken } from "../utils/jwt.js";
 import { ApiError } from "../utils/apiError.js";
 import env from "../config/env.js";
+import { getConnection } from "../config/database.js";
 
 function sanitizeUser(user) {
   return {
@@ -27,13 +28,13 @@ function buildRefreshTokenExpiry() {
   return expiresAt;
 }
 
-async function buildAuthResponse(user) {
+async function buildAuthResponse(user, connection) {
   const refreshToken = crypto.randomBytes(48).toString("hex");
   await refreshTokenModel.createRefreshToken({
     userId: user.id,
     tokenHash: hashToken(refreshToken),
     expiresAt: buildRefreshTokenExpiry(),
-  });
+  }, connection);
 
   return {
     token: createAccessToken({ userId: user.id }),
@@ -79,20 +80,27 @@ export async function refreshSession(refreshToken) {
   }
 
   const tokenHash = hashToken(refreshToken);
-  const storedToken = await refreshTokenModel.findValidByTokenHash(tokenHash);
-
-  if (!storedToken) {
-    throw new ApiError(401, "Refresh token invalide ou expire.");
+  const connection = await getConnection();
+  try {
+    await connection.beginTransaction();
+    const storedToken = await refreshTokenModel.findValidByTokenHash(tokenHash, connection, true);
+    if (!storedToken) {
+      throw new ApiError(401, "Refresh token invalide ou expire.");
+    }
+    const user = await userModel.findById(storedToken.userId, connection);
+    if (!user) {
+      throw new ApiError(401, "Utilisateur introuvable.");
+    }
+    await refreshTokenModel.revokeByTokenHash(tokenHash, connection);
+    const response = await buildAuthResponse(user, connection);
+    await connection.commit();
+    return response;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
   }
-
-  const user = await userModel.findById(storedToken.userId);
-  if (!user) {
-    throw new ApiError(401, "Utilisateur introuvable.");
-  }
-
-  await refreshTokenModel.revokeByTokenHash(tokenHash);
-
-  return buildAuthResponse(user);
 }
 
 export async function logout(refreshToken) {

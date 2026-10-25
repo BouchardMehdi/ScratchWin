@@ -18,6 +18,8 @@ router.get(
   "/history",
   requireAuth,
   [
+    query("page").optional().isInt({ min: 1, max: 100000 }).withMessage("Page invalide."),
+    query("pageSize").optional().isInt({ min: 1, max: 50 }).withMessage("Taille de page invalide."),
     query("ticketId").optional().isInt({ min: 1 }).withMessage("Filtre ticket invalide."),
     query("result")
       .optional()

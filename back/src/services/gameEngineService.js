@@ -1,10 +1,11 @@
 import { pickWeightedReward } from "../utils/pickWeightedReward.js";
+import { randomInt } from "node:crypto";
 
 const FILLER_SYMBOLS = {
   flash: ["coin", "star", "spark", "gem", "coin"],
   fortune: ["diamond", "key", "clover", "coin", "gem"],
   jackpot: ["diamond", "cherry", "coin", "gem", "star"],
-  mystere: ["question", "moon", "star", "spark", "gem"],
+  mystere: ["moon", "star", "spark", "gem"],
   "lucky-7": ["clover", "bell", "star", "cherry", "coin"],
 };
 
@@ -25,7 +26,7 @@ const TICKET_RULES = {
 };
 
 function randomItem(items) {
-  return items[Math.floor(Math.random() * items.length)];
+  return items[randomInt(items.length)];
 }
 
 function buildClassicBoard(slug, isWin, reward) {
@@ -39,7 +40,7 @@ function buildClassicBoard(slug, isWin, reward) {
   }));
 
   if (isWin) {
-    const winningIndex = Math.floor(Math.random() * cells.length);
+    const winningIndex = randomInt(cells.length);
     cells[winningIndex] = {
       id: winningIndex + 1,
       symbol: WIN_SYMBOLS[slug],
@@ -69,7 +70,7 @@ function buildMystereBoard(isWin, reward) {
   if (isWin) {
     const winningCells = new Set();
     while (winningCells.size < 2) {
-      winningCells.add(Math.floor(Math.random() * cells.length));
+      winningCells.add(randomInt(cells.length));
     }
 
     for (const cellIndex of winningCells) {
@@ -100,11 +101,11 @@ function buildLuckySevenBoard(isWin, reward) {
     variant: "neutral",
   }));
 
-  const sevenCount = isWin ? (reward.amount >= 30 ? 3 : 2) : Math.random() < 0.5 ? 1 : 0;
+  const sevenCount = isWin ? (reward.amount >= 30 ? 3 : 2) : randomInt(2);
   const chosenIndexes = new Set();
 
   while (chosenIndexes.size < sevenCount) {
-    chosenIndexes.add(Math.floor(Math.random() * cells.length));
+    chosenIndexes.add(randomInt(cells.length));
   }
 
   for (const index of chosenIndexes) {
@@ -152,8 +153,14 @@ function buildResultData(ticket, isWin, reward) {
 }
 
 export function generateGameOutcome(ticket, rewards) {
-  const isWin = Math.random() * 100 < ticket.winProbability;
-  const reward = isWin && rewards.length > 0 ? pickWeightedReward(rewards) : { label: "Perdu", amount: 0 };
+  if (!FILLER_SYMBOLS[ticket.slug] || !Number.isFinite(ticket.winProbability) || ticket.winProbability < 0 || ticket.winProbability > 100 ||
+    !rewards.length || rewards.some((reward) => !Number.isFinite(reward.amount) || reward.amount <= 0 || reward.amount > ticket.maxReward)) {
+    throw new Error("La configuration du ticket est invalide.");
+  }
+  // Validate the distribution even on losing rounds, before any credits are spent.
+  const selectedReward = pickWeightedReward(rewards);
+  const isWin = randomInt(10_000) < Math.round(ticket.winProbability * 100);
+  const reward = isWin ? selectedReward : { label: "Perdu", amount: 0 };
 
   return {
     isWin,

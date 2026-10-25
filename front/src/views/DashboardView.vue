@@ -1,10 +1,12 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useAuthStore } from "../stores/auth";
 import { useTicketsStore } from "../stores/tickets";
 
 const authStore = useAuthStore();
 const ticketsStore = useTicketsStore();
+const errorMessage = ref("");
+const loading = ref(true);
 
 const featuredTickets = computed(() => ticketsStore.items.slice(0, 3));
 const ticketCount = computed(() => ticketsStore.items.length);
@@ -24,16 +26,21 @@ const topReward = computed(() => {
 });
 
 onMounted(async () => {
-  if (!authStore.user) {
-    await authStore.fetchProfile();
+  try {
+    if (!authStore.user) await authStore.fetchProfile();
+    await ticketsStore.fetchTickets();
+  } catch (error) {
+    errorMessage.value = error.message;
+  } finally {
+    loading.value = false;
   }
-
-  await ticketsStore.fetchTickets();
 });
 </script>
 
 <template>
   <section class="section-block">
+    <p v-if="loading" class="empty-state" role="status">Chargement de ton espace...</p>
+    <p v-if="errorMessage" class="form-error" role="alert">{{ errorMessage }}</p>
     <div class="dashboard-hero">
       <div>
         <p class="eyebrow">Dashboard</p>
@@ -72,7 +79,7 @@ onMounted(async () => {
       </RouterLink>
       <article class="quick-card">
         <strong>Session active</strong>
-        <p>Le profil et le solde sont recharges automatiquement via JWT.</p>
+        <p>Ton solde est actualise apres chaque partie.</p>
       </article>
     </div>
   </section>

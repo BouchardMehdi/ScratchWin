@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, watch } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import { pinia } from "./stores/pinia";
@@ -15,9 +15,19 @@ const themeStore = useThemeStore(pinia);
 const authStore = useAuthStore(pinia);
 
 themeStore.initTheme();
-authStore.bootstrapSession().catch(() => {});
+watch(() => authStore.isAuthenticated, (authenticated) => {
+  if (!authenticated && router.currentRoute.value.meta.requiresAuth) router.replace("/auth");
+});
 
-app.mount("#app");
+async function mountApp() {
+  await authStore.bootstrapSession().catch(() => {});
+  await router.isReady();
+  if (!authStore.isAuthenticated && router.currentRoute.value.meta.requiresAuth) {
+    await router.replace("/auth");
+  }
+  app.mount("#app");
+}
+mountApp();
 
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {

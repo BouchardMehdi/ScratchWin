@@ -29,13 +29,13 @@ export async function createRefreshToken({ userId, tokenHash, expiresAt }, conne
   return mapRefreshToken(rows[0]);
 }
 
-export async function findValidByTokenHash(tokenHash, connection = pool) {
+export async function findValidByTokenHash(tokenHash, connection = pool, forUpdate = false) {
   const [rows] = await connection.query(
     `SELECT * FROM refresh_tokens
      WHERE token_hash = ?
        AND revoked_at IS NULL
        AND expires_at > NOW()
-     LIMIT 1`,
+     LIMIT 1${forUpdate ? " FOR UPDATE" : ""}`,
     [tokenHash],
   );
 

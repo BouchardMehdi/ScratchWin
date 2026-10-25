@@ -37,10 +37,13 @@ DB_PORT=3306
 DB_USER=scratchwin
 DB_PASSWORD=change_me
 DB_NAME=scratchwin
-JWT_SECRET=change_this_secret
+JWT_SECRET=<secret_aleatoire_de_32_octets_minimum>
 ACCESS_TOKEN_EXPIRES_IN=2h
 REFRESH_TOKEN_EXPIRES_DAYS=30
 ```
+
+Generer un secret avec `node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"`
+et remplacer la valeur de `JWT_SECRET` avant le lancement en production.
 
 ### Frontend
 
@@ -62,8 +65,8 @@ docker compose --env-file back/.env up -d --build
 MySQL 8.4 est lance avec les autres services. Compose utilise la base et
 l'utilisateur `scratchwin`, avec `DB_PASSWORD` issu de `back/.env`.
 Le backend attend que la base soit initialisee et accessible avant de demarrer.
-Le script `back/src/db/scratchwin.sql` s'execute uniquement lors de la creation
-du volume vide. Les donnees restent dans le volume `mysql_data` ; ne pas utiliser
+Le backend applique les migrations versionnees avant de demarrer l'API, sur une
+base neuve comme sur un volume existant, sans supprimer les comptes ou les parties. Les donnees restent dans le volume `mysql_data` ; ne pas utiliser
 `docker compose down -v` pour un arret normal. Une ancienne base externe doit
 etre migree separement si ses donnees doivent etre conservees.
 

@@ -13,19 +13,23 @@ const filters = reactive({
   result: "all",
 });
 
-async function loadHistory() {
+async function loadHistory(page = 1) {
   errorMessage.value = "";
 
   try {
-    await gamesStore.fetchHistory(filters);
+    await gamesStore.fetchHistory({ ...filters, page });
   } catch (error) {
     errorMessage.value = error.message;
   }
 }
 
 onMounted(async () => {
-  await ticketsStore.fetchTickets();
-  await loadHistory();
+  try {
+    await ticketsStore.fetchTickets();
+    await loadHistory();
+  } catch (error) {
+    errorMessage.value = error.message;
+  }
 });
 </script>
 
@@ -36,7 +40,7 @@ onMounted(async () => {
       <h1>Toutes les parties de l'utilisateur</h1>
     </div>
 
-    <form class="filter-bar" @submit.prevent="loadHistory">
+    <form class="filter-bar" @submit.prevent="loadHistory(1)">
       <label>
         Ticket
         <select v-model="filters.ticketId">
@@ -56,11 +60,20 @@ onMounted(async () => {
         </select>
       </label>
 
-      <button type="submit" class="button button-primary">Filtrer</button>
+      <button type="submit" class="button button-primary" :disabled="gamesStore.loadingHistory">Filtrer</button>
     </form>
 
     <p v-if="errorMessage" class="form-error">{{ errorMessage }}</p>
     <p v-else-if="gamesStore.loadingHistory" class="empty-state">Chargement de l'historique...</p>
     <HistoryList v-else :games="gamesStore.history" />
+    <nav v-if="!errorMessage" class="history-pagination" aria-label="Pages de l'historique">
+      <button type="button" class="button button-muted"
+        :disabled="gamesStore.loadingHistory || gamesStore.pagination.page <= 1"
+        @click="loadHistory(gamesStore.pagination.page - 1)">Precedent</button>
+      <span aria-live="polite">Page {{ gamesStore.pagination.page }}</span>
+      <button type="button" class="button button-muted"
+        :disabled="gamesStore.loadingHistory || !gamesStore.pagination.hasMore"
+        @click="loadHistory(gamesStore.pagination.page + 1)">Suivant</button>
+    </nav>
   </section>
 </template>

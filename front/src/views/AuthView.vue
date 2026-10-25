@@ -49,8 +49,7 @@ async function submitRegister() {
       <p class="eyebrow">Authentification</p>
       <h1>Connecte-toi pour commencer a jouer.</h1>
       <p>
-        Le MVP fournit une auth simple avec JWT, hash bcrypt et recuperation du profil
-        utilisateur.
+        Cree ton compte pour recevoir 50 credits, choisir un ticket et retrouver tes parties.
       </p>
     </div>
 
@@ -73,7 +72,7 @@ async function submitRegister() {
         </label>
         <label>
           Mot de passe
-          <input v-model="loginForm.password" type="password" placeholder="******" />
+          <input v-model="loginForm.password" required autocomplete="current-password" type="password" placeholder="******" />
         </label>
         <button type="submit" class="button button-primary" :disabled="authStore.loading">
           {{ authStore.loading ? "Connexion..." : "Se connecter" }}
@@ -91,7 +90,7 @@ async function submitRegister() {
         </label>
         <label>
           Mot de passe
-          <input v-model="registerForm.password" type="password" placeholder="******" />
+          <input v-model="registerForm.password" type="password" minlength="10" required autocomplete="new-password" placeholder="Au moins 10 caracteres" />
         </label>
         <button type="submit" class="button button-primary" :disabled="authStore.loading">
           {{ authStore.loading ? "Creation..." : "Creer mon compte" }}

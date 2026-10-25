@@ -19,6 +19,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   { path: "/history", name: "history", component: HistoryView, meta: { requiresAuth: true } },
+  { path: "/:pathMatch(.*)*", redirect: "/" },
 ];
 
 const router = createRouter({

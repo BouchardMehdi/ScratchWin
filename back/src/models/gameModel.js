@@ -55,6 +55,8 @@ export async function createGame(
 export async function findHistoryByUserId(userId, filters = {}, connection = pool) {
   const conditions = ["g.user_id = ?"];
   const params = [userId];
+  const page = Math.max(1, Math.min(100000, Number(filters.page) || 1));
+  const pageSize = Math.max(1, Math.min(50, Number(filters.pageSize) || 20));
 
   if (filters.ticketId) {
     conditions.push("g.ticket_id = ?");
@@ -75,10 +77,10 @@ export async function findHistoryByUserId(userId, filters = {}, connection = poo
      INNER JOIN tickets t ON t.id = g.ticket_id
      WHERE ${conditions.join(" AND ")}
      ORDER BY g.played_at DESC, g.id DESC
-     LIMIT 50`,
-    params,
+     LIMIT ? OFFSET ?`,
+    [...params, pageSize + 1, (page - 1) * pageSize],
   );
 
-  return rows.map(mapGame);
+  return { games: rows.slice(0, pageSize).map(mapGame), pagination: { page, pageSize, hasMore: rows.length > pageSize } };
 }
 

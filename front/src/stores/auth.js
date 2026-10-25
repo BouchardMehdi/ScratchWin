@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useGamesStore } from "./games";
 import {
   ACCESS_TOKEN_KEY,
   LAST_REFRESH_AT_KEY,
@@ -6,9 +7,11 @@ import {
   SESSION_EXPIRED_EVENT,
   SESSION_REFRESHED_EVENT,
   apiFetch,
+  refreshAccessToken,
+  invalidatePendingSession,
 } from "../api/http";
 
-const REFRESH_INTERVAL_MS = 2 * 60 * 60 * 1000;
+const REFRESH_INTERVAL_MS = 90 * 60 * 1000;
 
 let refreshTimeoutId = null;
 let maintenanceAttached = false;
@@ -20,6 +23,7 @@ export const useAuthStore = defineStore("auth", {
     lastRefreshAt: Number(localStorage.getItem(LAST_REFRESH_AT_KEY) || 0),
     user: null,
     loading: false,
+    sessionVersion: 0,
   }),
   getters: {
     isAuthenticated: (state) => Boolean(state.token || state.refreshToken),
@@ -40,6 +44,9 @@ export const useAuthStore = defineStore("auth", {
       this.scheduleRefresh();
     },
     clearSession() {
+      invalidatePendingSession();
+      this.sessionVersion += 1;
+      useGamesStore().resetSession();
       this.token = null;
       this.refreshToken = null;
       this.lastRefreshAt = 0;
@@ -61,11 +68,16 @@ export const useAuthStore = defineStore("auth", {
         return;
       }
 
-      const elapsed = Date.now() - this.lastRefreshAt;
-      const delay = Math.max(10_000, REFRESH_INTERVAL_MS - elapsed);
+      let expiresAt = this.lastRefreshAt + REFRESH_INTERVAL_MS;
+      try {
+        expiresAt = JSON.parse(atob(this.token.split(".")[1])).exp * 1000 - 60_000;
+      } catch { /* Expiry is a scheduling hint; the API validates the token. */ }
+      const delay = Math.max(10_000, expiresAt - Date.now());
 
       refreshTimeoutId = window.setTimeout(() => {
-        this.refreshSession().catch(() => {});
+        this.refreshSession().catch(() => {
+          if (this.refreshToken) this.scheduleRefresh();
+        });
       }, delay);
     },
     attachSessionMaintenance() {
@@ -95,11 +107,30 @@ export const useAuthStore = defineStore("auth", {
         this.scheduleRefresh();
       });
 
+      window.addEventListener("storage", (event) => {
+        if (event.key !== REFRESH_TOKEN_KEY || event.newValue !== localStorage.getItem(REFRESH_TOKEN_KEY)) return;
+        if (!event.newValue) {
+          this.clearSession();
+          return;
+        }
+        invalidatePendingSession();
+        this.sessionVersion += 1;
+        useGamesStore().resetSession();
+        this.user = null;
+        this.token = localStorage.getItem(ACCESS_TOKEN_KEY);
+        this.refreshToken = event.newValue;
+        this.lastRefreshAt = Number(localStorage.getItem(LAST_REFRESH_AT_KEY) || Date.now());
+        this.fetchProfile().catch(() => {});
+        this.scheduleRefresh();
+      });
+
       window.addEventListener(SESSION_EXPIRED_EVENT, () => {
         this.clearSession();
       });
     },
     async login(payload) {
+      this.clearSession();
+      const version = this.sessionVersion;
       this.loading = true;
       try {
         const response = await apiFetch("/auth/login", {
@@ -107,6 +138,7 @@ export const useAuthStore = defineStore("auth", {
           body: JSON.stringify(payload),
           skipAuthRefresh: true,
         });
+        if (version !== this.sessionVersion) throw new Error("Session modifiee.");
         this.setSession({
           token: response.token,
           refreshToken: response.refreshToken,
@@ -118,6 +150,8 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     async register(payload) {
+      this.clearSession();
+      const version = this.sessionVersion;
       this.loading = true;
       try {
         const response = await apiFetch("/auth/register", {
@@ -125,6 +159,7 @@ export const useAuthStore = defineStore("auth", {
           body: JSON.stringify(payload),
           skipAuthRefresh: true,
         });
+        if (version !== this.sessionVersion) throw new Error("Session modifiee.");
         this.setSession({
           token: response.token,
           refreshToken: response.refreshToken,
@@ -140,35 +175,18 @@ export const useAuthStore = defineStore("auth", {
         return null;
       }
 
-      const response = await apiFetch("/auth/refresh", {
-        method: "POST",
-        body: JSON.stringify({ refreshToken: this.refreshToken }),
-        skipAuthRefresh: true,
-      });
-
-      this.setSession({
-        token: response.token,
-        refreshToken: response.refreshToken,
-        user: response.user || this.user,
-      });
-
-      return response;
+      return refreshAccessToken();
     },
     async fetchProfile() {
       if (!this.token) {
         return null;
       }
 
-      try {
-        const response = await apiFetch("/auth/me");
-        this.user = response.user;
-        return response.user;
-      } catch (error) {
-        if (error.status === 401 || error.status === 403) {
-          this.clearSession();
-        }
-        throw error;
-      }
+      const version = this.sessionVersion;
+      const response = await apiFetch("/auth/me");
+      if (version !== this.sessionVersion) return null;
+      this.user = response.user;
+      return response.user;
     },
     async bootstrapSession() {
       this.attachSessionMaintenance();
@@ -209,11 +227,13 @@ export const useAuthStore = defineStore("auth", {
       return this.user;
     },
     async logout() {
+      const refreshToken = this.refreshToken;
+      this.clearSession();
       try {
-        if (this.refreshToken) {
+        if (refreshToken) {
           await apiFetch("/auth/logout", {
             method: "POST",
-            body: JSON.stringify({ refreshToken: this.refreshToken }),
+            body: JSON.stringify({ refreshToken }),
             skipAuthRefresh: true,
           });
         }
@@ -221,7 +241,6 @@ export const useAuthStore = defineStore("auth", {
         // Ignore logout API failures on the client.
       }
 
-      this.clearSession();
     },
   },
 });

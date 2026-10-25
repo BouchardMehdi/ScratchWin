@@ -1,13 +1,5 @@
-CREATE DATABASE IF NOT EXISTS scratchwin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE scratchwin;
-
-DROP TABLE IF EXISTS games;
-DROP TABLE IF EXISTS refresh_tokens;
-DROP TABLE IF EXISTS ticket_rewards;
-DROP TABLE IF EXISTS tickets;
-DROP TABLE IF EXISTS users;
-
-CREATE TABLE users (
+-- Initialisation non destructive, appliquee par le gestionnaire de migrations.
+CREATE TABLE IF NOT EXISTS users (
   id INT NOT NULL AUTO_INCREMENT,
   username VARCHAR(50) NOT NULL,
   email VARCHAR(120) NOT NULL,
@@ -20,7 +12,7 @@ CREATE TABLE users (
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE tickets (
+CREATE TABLE IF NOT EXISTS tickets (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
   slug VARCHAR(100) NOT NULL,
@@ -36,7 +28,7 @@ CREATE TABLE tickets (
   UNIQUE KEY uq_tickets_slug (slug)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE ticket_rewards (
+CREATE TABLE IF NOT EXISTS ticket_rewards (
   id INT NOT NULL AUTO_INCREMENT,
   ticket_id INT NOT NULL,
   label VARCHAR(100) NOT NULL,
@@ -49,7 +41,7 @@ CREATE TABLE ticket_rewards (
     FOREIGN KEY (ticket_id) REFERENCES tickets (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE games (
+CREATE TABLE IF NOT EXISTS games (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NOT NULL,
   ticket_id INT NOT NULL,
@@ -68,7 +60,7 @@ CREATE TABLE games (
     FOREIGN KEY (ticket_id) REFERENCES tickets (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE refresh_tokens (
+CREATE TABLE IF NOT EXISTS refresh_tokens (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NOT NULL,
   token_hash VARCHAR(64) NOT NULL,
@@ -83,7 +75,7 @@ CREATE TABLE refresh_tokens (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO tickets (id, name, slug, price, max_reward, win_probability, ticket_type, description, is_active)
+INSERT IGNORE INTO tickets (id, name, slug, price, max_reward, win_probability, ticket_type, description, is_active)
 VALUES
   (1, 'Flash', 'flash', 2.00, 20.00, 35.00, 'instant', 'Ticket peu cher avec petits gains et probabilite moyenne.', 1),
   (2, 'Fortune', 'fortune', 5.00, 75.00, 22.00, 'instant', 'Ticket intermediaire avec gains moyens.', 1),
@@ -92,24 +84,121 @@ VALUES
   (5, 'Lucky 7', 'lucky-7', 3.00, 50.00, 20.00, 'symbols', 'Ticket base sur la revelation de symboles.', 1);
 
 INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
-VALUES
-  (1, 'Petit gain', 2.00, 50),
-  (1, 'Gain moyen', 5.00, 30),
-  (1, 'Gros gain', 10.00, 15),
-  (1, 'Max gain', 20.00, 5),
-  (2, 'Petit gain', 5.00, 45),
-  (2, 'Gain moyen', 15.00, 30),
-  (2, 'Gros gain', 30.00, 18),
-  (2, 'Max gain', 75.00, 7),
-  (3, 'Petit gain', 10.00, 50),
-  (3, 'Gain moyen', 25.00, 25),
-  (3, 'Gros gain', 100.00, 20),
-  (3, 'Max gain', 250.00, 5),
-  (4, 'Mini surprise', 4.00, 35),
-  (4, 'Bonne surprise', 12.00, 30),
-  (4, 'Tres bonne surprise', 35.00, 20),
-  (4, 'Surprise max', 100.00, 15),
-  (5, 'Double 7', 6.00, 45),
-  (5, 'Triple symbole', 15.00, 30),
-  (5, 'Triple 7', 30.00, 18),
-  (5, 'Lucky max', 50.00, 7);
+SELECT t.id, 'Petit gain', 2.00, 50 FROM tickets t
+WHERE t.slug = 'flash' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 2.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Gain moyen', 5.00, 30 FROM tickets t
+WHERE t.slug = 'flash' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 5.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Gros gain', 10.00, 15 FROM tickets t
+WHERE t.slug = 'flash' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 10.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Max gain', 20.00, 5 FROM tickets t
+WHERE t.slug = 'flash' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 20.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Petit gain', 5.00, 45 FROM tickets t
+WHERE t.slug = 'fortune' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 5.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Gain moyen', 15.00, 30 FROM tickets t
+WHERE t.slug = 'fortune' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 15.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Gros gain', 30.00, 18 FROM tickets t
+WHERE t.slug = 'fortune' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 30.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Max gain', 75.00, 7 FROM tickets t
+WHERE t.slug = 'fortune' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 75.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Petit gain', 10.00, 50 FROM tickets t
+WHERE t.slug = 'jackpot' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 10.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Gain moyen', 25.00, 25 FROM tickets t
+WHERE t.slug = 'jackpot' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 25.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Gros gain', 100.00, 20 FROM tickets t
+WHERE t.slug = 'jackpot' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 100.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Max gain', 250.00, 5 FROM tickets t
+WHERE t.slug = 'jackpot' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 250.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Mini surprise', 4.00, 35 FROM tickets t
+WHERE t.slug = 'mystere' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 4.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Bonne surprise', 12.00, 30 FROM tickets t
+WHERE t.slug = 'mystere' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 12.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Tres bonne surprise', 35.00, 20 FROM tickets t
+WHERE t.slug = 'mystere' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 35.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Surprise max', 100.00, 15 FROM tickets t
+WHERE t.slug = 'mystere' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 100.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Double 7', 6.00, 45 FROM tickets t
+WHERE t.slug = 'lucky-7' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 6.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Triple symbole', 15.00, 30 FROM tickets t
+WHERE t.slug = 'lucky-7' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 15.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Triple 7', 30.00, 18 FROM tickets t
+WHERE t.slug = 'lucky-7' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 30.00
+);
+
+INSERT INTO ticket_rewards (ticket_id, label, amount, weight)
+SELECT t.id, 'Lucky max', 50.00, 7 FROM tickets t
+WHERE t.slug = 'lucky-7' AND NOT EXISTS (
+  SELECT 1 FROM ticket_rewards r WHERE r.ticket_id = t.id AND r.amount = 50.00
+);

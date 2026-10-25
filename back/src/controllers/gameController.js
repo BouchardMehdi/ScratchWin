@@ -11,12 +11,14 @@ export async function play(req, res, next) {
 
 export async function history(req, res, next) {
   try {
-    const games = await gameService.getHistory(req.user.id, {
+    const response = await gameService.getHistory(req.user.id, {
       ticketId: req.query.ticketId ? Number(req.query.ticketId) : null,
       result: req.query.result || null,
+      page: Number(req.query.page || 1),
+      pageSize: Number(req.query.pageSize || 20),
     });
 
-    res.json({ games });
+    res.json(response);
   } catch (error) {
     next(error);
   }
