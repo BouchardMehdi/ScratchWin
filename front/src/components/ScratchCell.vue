@@ -16,6 +16,7 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  foilTone: { type: String, default: "silver" },
 });
 
 const emit = defineEmits(["revealed"]);
@@ -29,6 +30,8 @@ let isScratching = false;
 let strokeCount = 0;
 let resizeObserver = null;
 let particleId = 0;
+let previousPoint = null;
+const particleTimers = new Set();
 
 function getBrushRadius(width) {
   return Math.max(15, width * 0.1);
@@ -43,22 +46,24 @@ function paintScratchCover() {
   }
 
   const rect = wrapper.getBoundingClientRect();
-  const ratio = window.devicePixelRatio || 1;
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.max(1, Math.floor(rect.width * ratio));
   canvas.height = Math.max(1, Math.floor(rect.height * ratio));
   canvas.style.width = `${rect.width}px`;
   canvas.style.height = `${rect.height}px`;
 
-  const context = canvas.getContext("2d");
+  const context = canvas.getContext("2d", { willReadFrequently: true });
   context.setTransform(1, 0, 0, 1, 0, 0);
   context.scale(ratio, ratio);
 
   const baseGradient = context.createLinearGradient(0, 0, rect.width, rect.height);
-  baseGradient.addColorStop(0, "#f2f4f8");
-  baseGradient.addColorStop(0.18, "#bec6d4");
-  baseGradient.addColorStop(0.5, "#eef2f7");
-  baseGradient.addColorStop(0.7, "#9ea7b8");
-  baseGradient.addColorStop(1, "#d9dee7");
+  const tones = {
+    silver: ["#eff0eb", "#a7afb3", "#e2e7e6", "#9da5aa", "#dce0df"],
+    gold: ["#fff1c9", "#c4a66b", "#efe0b8", "#bba06b", "#e4d3a4"],
+    lilac: ["#f0ebf6", "#b2a7c3", "#e2daed", "#a69bb8", "#d8cde4"],
+  };
+  const colors = tones[props.foilTone] || tones.silver;
+  [0, 0.18, 0.5, 0.7, 1].forEach((stop, index) => baseGradient.addColorStop(stop, colors[index]));
   context.fillStyle = baseGradient;
   context.fillRect(0, 0, rect.width, rect.height);
 
@@ -104,6 +109,11 @@ function paintScratchCover() {
   context.shadowBlur = 6;
   context.fillText("GRATTER", rect.width / 2, rect.height / 2 + 4);
   context.shadowBlur = 0;
+  context.font = "italic 700 11px Georgia";
+  context.fillStyle = "rgba(70, 76, 82, 0.4)";
+  context.fillText("ScratchWin", rect.width / 2, rect.height / 2 - 16);
+  context.font = "9px monospace";
+  context.fillText(String(props.cell.id).padStart(2, "0"), rect.width - 12, rect.height - 10);
 }
 
 function revealCell() {
@@ -151,10 +161,22 @@ function scratchAt(clientX, clientY) {
 
   context.save();
   context.globalCompositeOperation = "destination-out";
+  context.fillStyle = "#000";
+  context.strokeStyle = "#000";
+  context.globalAlpha = 1;
+  context.lineWidth = getBrushRadius(rect.width) * 2;
+  context.lineCap = "round";
+  context.beginPath();
+  if (previousPoint) {
+    context.moveTo(previousPoint.x, previousPoint.y);
+    context.lineTo(x, y);
+    context.stroke();
+  }
   context.beginPath();
   context.arc(x, y, getBrushRadius(rect.width), 0, Math.PI * 2);
   context.fill();
   context.restore();
+  previousPoint = { x, y };
 
   playScratchSound();
 
@@ -185,9 +207,11 @@ function spawnParticle(x, y) {
 
   particles.value = [...particles.value, particle];
 
-  window.setTimeout(() => {
+  const timer = window.setTimeout(() => {
     particles.value = particles.value.filter((item) => item.id !== id);
+    particleTimers.delete(timer);
   }, particle.duration);
+  particleTimers.add(timer);
 }
 
 function onPointerDown(event) {
@@ -201,6 +225,7 @@ function onPointerDown(event) {
 
   isScratching = true;
   strokeCount = 0;
+  previousPoint = null;
   canvasRef.value?.setPointerCapture?.(event.pointerId);
   scratchAt(event.clientX, event.clientY);
 }
@@ -215,6 +240,7 @@ function onPointerMove(event) {
 
 function stopScratching(event) {
   isScratching = false;
+  previousPoint = null;
 
   if (event?.pointerId != null) {
     try {
@@ -231,6 +257,8 @@ watch(
   () => props.roundToken,
   async () => {
     revealed.value = false;
+    previousPoint = null;
+    particles.value = [];
     await nextTick();
     paintScratchCover();
   },
@@ -260,6 +288,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
+  particleTimers.forEach((timer) => window.clearTimeout(timer));
 });
 </script>
 
@@ -286,7 +315,7 @@ onBeforeUnmount(() => {
       :class="`particle-${particle.tone}`"
     />
 
-    <div class="scratch-cell-content" :class="{ visible: revealed }">
+    <div class="scratch-cell-content" :class="{ visible: revealed }" :aria-hidden="!revealed">
       <SymbolToken :symbol="props.cell.symbol" size="large" :label="props.cell.label" />
       <strong v-if="props.cell.caption" class="scratch-cell-caption">
         {{ props.cell.caption }}
@@ -297,6 +326,11 @@ onBeforeUnmount(() => {
       v-if="!revealed"
       ref="canvasRef"
       class="scratch-cover"
+      tabindex="0"
+      role="button"
+      :aria-label="`Révéler la case ${props.cell.id}`"
+      @keydown.enter.prevent="revealCell"
+      @keydown.space.prevent="revealCell"
       @pointerdown="onPointerDown"
       @pointermove="onPointerMove"
       @pointerup="stopScratching"

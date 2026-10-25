@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import RevealGrid from "../components/RevealGrid.vue";
 import SymbolToken from "../components/SymbolToken.vue";
+import LotteryTicket from "../components/LotteryTicket.vue";
 import { getTicketUi } from "../data/ticketRules";
 import { useGamesStore } from "../stores/games";
 import { useTicketsStore } from "../stores/tickets";
@@ -47,32 +48,34 @@ async function play() {
 
 <template>
   <section class="section-block">
+    <RouterLink to="/tickets" class="ticket-back-link"><span aria-hidden="true">←</span> Tous les tickets</RouterLink>
     <p v-if="loading" class="empty-state" role="status">Chargement du ticket...</p>
     <p v-else-if="!ticket" class="form-error" role="alert">{{ errorMessage || "Ce ticket est introuvable." }}</p>
-    <div v-else class="scratch-layout">
+    <div v-else class="ticket-play-layout">
       <div class="scratch-sidebar">
-        <p class="eyebrow">Ticket selectionne</p>
+        <p class="eyebrow">{{ ticketUi.collection }}</p>
         <h1>{{ ticket.name }}</h1>
-        <p>{{ ticket.description }}</p>
+        <p class="ticket-play-description">{{ ticketUi.tagline }} Achète ton ticket, puis passe le doigt ou la souris sur les zones à gratter.</p>
 
-        <dl class="ticket-stats">
+        <dl class="ticket-play-stats">
           <div>
             <dt>Prix</dt>
-            <dd>{{ ticket.price.toFixed(2) }} credits</dd>
+            <dd>{{ ticket.price.toLocaleString('fr-FR') }} <small>crédits</small></dd>
           </div>
           <div>
-            <dt>Gain max</dt>
-            <dd>{{ ticket.maxReward.toFixed(2) }} credits</dd>
-          </div>
-          <div>
-            <dt>Probabilite</dt>
-            <dd>{{ ticket.winProbability }}%</dd>
+            <dt>Gain maximum</dt>
+            <dd>{{ ticket.maxReward.toLocaleString('fr-FR') }} <small>crédits</small></dd>
           </div>
         </dl>
-
-        <div v-if="ticketUi" class="ticket-rule-box scratch-rule-box">
-          <p class="eyebrow">Comment gagner</p>
-          <p class="ticket-rule-text">{{ ticketUi.winRule }}</p>
+        <button type="button" class="button ticket-buy-button" :disabled="gamesStore.playing" @click="play">
+          <span>{{ gamesStore.playing ? "Préparation du ticket…" : gamesStore.currentGame?.game?.ticketId === ticket.id ? "Acheter un nouveau ticket" : "Acheter et gratter" }}</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+        <p class="ticket-play-note">{{ ticket.winProbability }} % de tickets gagnants · Jeu en crédits virtuels.</p>
+        <p v-if="errorMessage" class="form-error" role="alert">{{ errorMessage }}</p>
+        <div v-if="ticketUi" class="ticket-play-rules">
+          <h2>Comment gagner ?</h2>
+          <p>{{ ticketUi.winRule }}</p>
           <div class="symbol-row">
             <SymbolToken
               v-for="symbol in ticketUi.symbols"
@@ -83,22 +86,22 @@ async function play() {
           </div>
         </div>
 
-        <button type="button" class="button button-primary" :disabled="gamesStore.playing" @click="play">
-          {{ gamesStore.playing ? "Generation..." : "Acheter et gratter" }}
-        </button>
-
-        <p v-if="errorMessage" class="form-error">{{ errorMessage }}</p>
       </div>
 
       <div class="scratch-main">
         <RevealGrid
           v-if="gamesStore.currentGame?.game?.ticketId === ticket.id"
           :result-data="gamesStore.currentGame.game.resultData"
+          :ticket="ticket"
+          :game-id="gamesStore.currentGame.game.id"
         />
-        <div v-else class="placeholder-panel">
-          <strong>Le ticket n'est pas encore achete.</strong>
-          <p>Achete un ticket, puis gratte les cases pour reveler les symboles.</p>
-        </div>
+        <template v-else>
+          <div class="ticket-sealed-label">
+            <span><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="8" rx="2" stroke="currentColor" /><path d="M5 7V4a3 3 0 0 1 6 0v3" stroke="currentColor" /></svg> Ticket non acheté</span>
+            <span>Aperçu</span>
+          </div>
+          <LotteryTicket :ticket="ticket" />
+        </template>
       </div>
     </div>
   </section>

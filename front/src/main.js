@@ -5,6 +5,7 @@ import { pinia } from "./stores/pinia";
 import { useAuthStore } from "./stores/auth";
 import { useThemeStore } from "./stores/theme";
 import "./assets/main.css";
+import "./assets/tickets.css";
 
 const app = createApp(App);
 

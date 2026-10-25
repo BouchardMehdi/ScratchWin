@@ -1,0 +1,200 @@
+/* A shared printed ticket, from the catalogue to the scratch table. */
+.lottery-ticket {
+  --ticket-deep: #06435a;
+  --ticket-color: #0c7390;
+  --ticket-accent: #fff18a;
+  --ticket-paper: #fff9e9;
+  --ticket-ink: #133d45;
+  container-type: inline-size;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  color: var(--ticket-ink);
+  background: var(--ticket-paper);
+  border: 5px solid var(--ticket-paper);
+  border-radius: 3px;
+  box-shadow: 0 18px 32px -15px #071b3440, 0 2px 6px #071b3418;
+  mask: radial-gradient(circle at 0 50%, transparent 3px, #000 3.5px) 0 0 / 51% 12px repeat-y,
+        radial-gradient(circle at 100% 50%, transparent 3px, #000 3.5px) 100% 0 / 51% 12px repeat-y;
+}
+
+.lottery-fortune { --ticket-deep: #062f2b; --ticket-color: #145647; --ticket-accent: #f1d28b; --ticket-paper: #fcf3db; --ticket-ink: #254f42; }
+.lottery-jackpot { --ticket-deep: #4d1039; --ticket-color: #a92d61; --ticket-accent: #ffe09a; --ticket-paper: #fff4e1; --ticket-ink: #632441; }
+.lottery-mystere { --ticket-deep: #18143e; --ticket-color: #51417e; --ticket-accent: #ead2a2; --ticket-paper: #f5f0e9; --ticket-ink: #45395f; }
+.lottery-lucky-7 { --ticket-deep: #064e3a; --ticket-color: #148566; --ticket-accent: #fff0bf; --ticket-paper: #fbf0d5; --ticket-ink: #145640; }
+
+.ticket-print-band {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: var(--ticket-paper);
+  background: var(--ticket-deep);
+  border-bottom: 1px solid #ffffff30;
+}
+.ticket-print-brand { display: flex; align-items: center; gap: 8px; font: 800 9px/1.2 "Segoe UI", sans-serif; letter-spacing: .14em; }
+.ticket-print-brand b { border: 1px solid currentColor; padding: 3px; font-size: 10px; letter-spacing: -.08em; }
+.ticket-denomination { font-size: 21px; line-height: 1; font-weight: 900; white-space: nowrap; }
+.ticket-denomination small { font-size: 8px; letter-spacing: .08em; }
+.ticket-hero {
+  position: relative;
+  min-height: 245px;
+  min-height: 72cqw;
+  overflow: hidden;
+  padding: 19px 20px;
+  color: var(--ticket-accent);
+  background: radial-gradient(ellipse at 90% 85%, #ffffff13, transparent 60%), linear-gradient(135deg, var(--ticket-color), var(--ticket-deep));
+}
+.ticket-guilloche { position: absolute; inset: 0; opacity: .13; background: repeating-radial-gradient(ellipse at 80% 70%, transparent 0 6px, var(--ticket-accent) 6.5px 7px, transparent 7.5px 12px); pointer-events: none; }
+.ticket-collection { position: relative; z-index: 2; margin: 0 0 9px; font-size: 9px; font-size: clamp(8px, 2.7cqw, 13px); letter-spacing: .2em; font-weight: 600; text-transform: uppercase; }
+.ticket-display-title {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  width: max-content;
+  max-width: 100%;
+  font-family: Impact, "Arial Narrow", "Segoe UI", sans-serif;
+  font-size: clamp(42px, 17.5cqw, 92px);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: .015em;
+  color: var(--ticket-accent);
+  text-shadow: 2px 3px 0 var(--ticket-deep), 3px 4px 0 #ffffff35;
+}
+.ticket-artwork { position: absolute; z-index: 1; width: 61%; height: auto; right: -2%; bottom: -3%; color: var(--ticket-accent); filter: drop-shadow(0 5px 0 #00000012); }
+.ticket-prize { position: relative; z-index: 2; width: 50%; display: flex; flex-direction: column; align-items: flex-start; margin-top: 20px; }
+.ticket-prize > span { font-size: clamp(8px, 2.6cqw, 14px); font-weight: 800; letter-spacing: .1em; }
+.ticket-prize strong { display: block; font-family: Impact, "Arial Narrow", sans-serif; font-size: clamp(48px, 20cqw, 112px); line-height: 1.05; font-weight: 900; letter-spacing: -.025em; color: #fff9de; }
+.ticket-edition { position: absolute; top: 10px; right: 12px; font: 600 6px/1.6 "Segoe UI", sans-serif; letter-spacing: .16em; text-align: right; opacity: .65; }
+
+.lottery-flash .ticket-hero { background: repeating-conic-gradient(from 2deg at 95% 85%, #ffffff08 0deg 9deg, transparent 9deg 24deg), linear-gradient(135deg, #0c99b7, #06364f); }
+.lottery-flash .ticket-display-title { font-style: italic; letter-spacing: -.02em; transform: rotate(-5deg); transform-origin: left; color: #fff79a; text-shadow: 3px 4px 0 #07394e, 5px 6px 0 #00d6ef; }
+.lottery-flash .ticket-guilloche { opacity: .08; background: radial-gradient(#fff 1px, transparent 1.5px) 0 0 / 7px 7px; }
+.lottery-fortune .ticket-hero { outline: 1px solid #e7c57f75; outline-offset: -9px; }
+.lottery-fortune .ticket-display-title { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; font-size: clamp(40px, 17cqw, 89px); letter-spacing: -.055em; }
+.lottery-fortune .ticket-prize strong { color: #f3d994; }
+.lottery-jackpot .ticket-display-title { color: #fff0bf; text-shadow: 2px 2px 0 #da5168, 4px 4px 0 #47102d; }
+.lottery-jackpot .ticket-guilloche { background: radial-gradient(circle, #ffe1a3 1px, transparent 1.5px) 0 0 / 12px 12px; opacity: .24; }
+.lottery-mystere .ticket-display-title { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(40px, 17cqw, 89px); letter-spacing: -.06em; }
+.lottery-mystere .ticket-guilloche { background: radial-gradient(circle, #d6c3ee 1px, transparent 1.6px) 13px 7px / 38px 43px, radial-gradient(circle, #ffe8bb .7px, transparent 1.2px) 0 0 / 29px 37px; opacity: .45; }
+.lottery-lucky-7 .ticket-display-title { color: #fff3d1; text-shadow: 2px 2px 0 #0b6149, 4px 4px 0 #d84e36; letter-spacing: .035em; }
+.lottery-lucky-7 .ticket-guilloche { background: repeating-linear-gradient(90deg, transparent 0 7px, #fff2c7 7px 8px); opacity: .07; }
+.lottery-lucky-7 .ticket-hero::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 8px; background: repeating-conic-gradient(var(--ticket-accent) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; opacity: .7; }
+
+.ticket-game-area { position: relative; padding: 15px 18px 12px; background: repeating-linear-gradient(0deg, transparent 0 3px, #916e3705 3px 4px), var(--ticket-paper); }
+.ticket-zone-heading { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; font-size: 9px; font-weight: 800; letter-spacing: .15em; }
+.ticket-zone-heading > span:last-child { font-size: 14px; }
+.ticket-preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; min-height: 151px; }
+.ticket-preview-grid--nine { gap: 5px; }
+.ticket-preview-cell {
+  --foil-light: #e7eaeb; --foil-dark: #9ea7ad;
+  position: relative; display: grid; place-items: center; min-width: 0; min-height: 68px;
+  border: 1px solid #8c939a90; border-radius: 3px; color: #54616b;
+  background: repeating-linear-gradient(135deg, #ffffff00 0 5px, #ffffff30 5px 6px), linear-gradient(125deg, var(--foil-light), var(--foil-dark) 45%, var(--foil-light) 65%, var(--foil-dark));
+  box-shadow: inset 0 1px 0 #fff8, inset 0 -2px 4px #0000000c;
+}
+.ticket-preview-grid--nine .ticket-preview-cell { min-height: 45px; }
+.foil-gold { --foil-light: #f6e7ba; --foil-dark: #bd9e62; color: #77613c; border-color: #aa8e59; }
+.foil-lilac { --foil-light: #e6e1f1; --foil-dark: #aaa0bc; color: #675d7a; border-color: #9c90b2; }
+.foil-monogram { font: italic 900 22px/1 Georgia, serif; letter-spacing: -.12em; opacity: .55; text-shadow: 0 1px 0 #ffffff70; }
+.ticket-preview-cell small { position: absolute; right: 5px; bottom: 3px; font: 7px/1 monospace; opacity: .7; }
+.ticket-preview-note { margin: 8px 0 0; text-align: center; font-size: 9px; color: var(--ticket-ink); opacity: .75; }
+.ticket-printed-rule { margin: 12px 0 0; text-align: center; font: italic 700 clamp(11px, 3.5cqw, 17px)/1.4 Georgia, serif; }
+.ticket-stub { display: flex; align-items: center; gap: 10px; padding: 13px 17px 11px; border-top: 1px dashed #75664e77; background: var(--ticket-paper); }
+.ticket-barcode { flex: 0 0 58px; height: 25px; background: repeating-linear-gradient(90deg, #252722 0 1px, transparent 1px 3px, #252722 3px 6px, transparent 6px 7px, #252722 7px 9px, transparent 9px 13px, #252722 13px 14px, transparent 14px 17px); }
+.ticket-stub > div { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 0; }
+.ticket-stub > div > span { font: 8px/1.2 monospace; letter-spacing: .08em; }
+.ticket-stub small { font-size: 6px; letter-spacing: .07em; }
+.ticket-stub-mark { border: 1px solid currentColor; padding: 4px; font: italic 700 13px/1 Georgia, serif; opacity: .55; }
+
+/* The sheet is the focus. Controls and optional details live outside it. */
+.ticket-catalogue .ticket-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 38px 28px; align-items: start; }
+.ticket-card { padding: 0; gap: 0; background: none; border: 0; border-radius: 0; box-shadow: none; min-width: 0; }
+.ticket-preview-link { display: block; transition: transform .25s ease, filter .25s ease; filter: drop-shadow(0 8px 9px #142c3e15); }
+.ticket-preview-link:hover { transform: translateY(-5px) rotate(-.7deg); filter: drop-shadow(0 15px 12px #142c3e25); }
+.ticket-preview-link:focus-visible, .ticket-pick-button:focus-visible, .ticket-details summary:focus-visible { outline: 3px solid var(--secondary); outline-offset: 5px; }
+.ticket-card-caption { padding: 17px 2px 13px; }
+.ticket-card-caption p { margin: 0 0 3px; font-size: 14px; font-weight: 700; }
+.ticket-card-caption > span { font-size: 11px; color: var(--text-soft); }
+.ticket-pick-button { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 15px; border: 1px solid var(--border); background: var(--text-main); color: var(--input-bg); border-radius: 7px; font-size: 12px; font-weight: 700; transition: background .2s, transform .2s; }
+.ticket-pick-button:hover { transform: translateY(-2px); background: var(--secondary); color: white; }
+.ticket-pick-button small { font-size: 11px; font-weight: 400; opacity: .8; }
+.ticket-pick-button > span:last-child { font-size: 20px; line-height: 1; }
+.ticket-details { margin-top: 12px; font-size: 12px; color: var(--text-soft); }
+.ticket-details summary { cursor: pointer; padding: 3px 0; }
+.ticket-details > p { line-height: 1.6; }
+.ticket-prize-list { list-style: none; margin: 12px 0 0; padding: 0; }
+.ticket-prize-list li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.ticket-prize-list b { color: var(--text-main); white-space: nowrap; }
+.catalogue-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+.catalogue-heading .eyebrow { font-size: 10px; }
+.catalogue-heading h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -.055em; font-size: clamp(2.4rem, 5vw, 4.2rem); margin: 9px 0 12px; }
+.catalogue-heading p:last-child { max-width: 490px; margin-bottom: 0; font-size: 14px; line-height: 1.7; }
+.catalogue-count { white-space: nowrap; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding-bottom: 6px; color: var(--text-soft); }
+.catalogue-count::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--secondary); }
+
+/* A larger copy of the same physical ticket on the play table. */
+.ticket-back-link { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px; color: var(--text-soft); font-size: 12px; }
+.ticket-back-link:hover { color: var(--secondary); }
+.ticket-play-layout { display: grid; grid-template-columns: minmax(240px, 310px) minmax(0, 560px); justify-content: center; align-items: start; gap: clamp(28px, 6vw, 86px); }
+.ticket-play-layout .scratch-sidebar { top: 112px; }
+.ticket-play-layout .scratch-sidebar h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -.05em; font-size: 3.2rem; margin-top: 14px; }
+.ticket-play-description { font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+.ticket-play-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 24px; padding-block: 17px; border-block: 1px solid var(--border); }
+.ticket-play-stats dt { color: var(--text-soft); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.ticket-play-stats dd { margin: 7px 0 0; font-size: 21px; font-weight: 750; }
+.ticket-play-stats dd small { font-size: 11px; font-weight: 400; color: var(--text-soft); }
+.ticket-buy-button { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; padding: 16px 18px; background: var(--text-main); color: var(--input-bg); border-radius: 8px; font-size: 13px; font-weight: 700; }
+.ticket-buy-button > span:last-child { font-size: 19px; }
+.ticket-play-note { font-size: 11px; line-height: 1.6; }
+.ticket-play-rules { margin-top: 28px; }
+.ticket-play-rules h2 { font-size: 12px; margin: 0 0 10px; }
+.ticket-play-rules > p { font-size: 12px; line-height: 1.8; }
+.ticket-play-rules .symbol-token { width: 34px; height: 34px; }
+.ticket-play-layout .scratch-main { min-width: 0; }
+.ticket-sealed-label, .scratch-session-toolbar { min-height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; font-size: 10px; letter-spacing: .08em; color: var(--text-soft); text-transform: uppercase; }
+.ticket-sealed-label > span:first-child, .scratch-session-toolbar > span { display: flex; align-items: center; gap: 6px; }
+.ticket-sealed-label svg { width: 12px; height: 12px; }
+.scratch-session-toolbar button { padding: 7px 11px; background: var(--surface); color: var(--text-main); border: 1px solid var(--border); border-radius: 5px; font-size: 11px; cursor: pointer; }
+.scratch-session-toolbar button:disabled { opacity: .5; cursor: default; }
+.lottery-ticket .reveal-grid { gap: 8px; }
+.lottery-ticket .scratch-cell-shell { min-height: 132px; min-height: 23cqw; border: 1px solid #baac9266; border-radius: 4px; background: #fffdf4; box-shadow: inset 0 1px 6px #6e542310; }
+.lottery-ticket .scratch-cell-shell.win.revealed { border-color: #b49235; background: radial-gradient(ellipse at center, #fff7c9, #f3e9ba); box-shadow: inset 0 0 0 2px #d1b45650; }
+.lottery-ticket .scratch-cell-content { opacity: 1; transform: none; gap: 3px; padding: 6px; }
+.lottery-ticket .symbol-token { background: none; border: 0; box-shadow: none; color: var(--ticket-ink); }
+.lottery-ticket .symbol-large { width: 55px; height: 55px; width: 12cqw; height: 12cqw; }
+.lottery-ticket .scratch-cell-caption { color: var(--ticket-ink); font-family: Georgia, serif; font-size: clamp(11px, 3.5cqw, 20px); }
+.lottery-ticket .scratch-cover:focus-visible { outline: 3px solid var(--ticket-ink); outline-offset: -4px; }
+.scratch-session .result-banner { margin-top: 20px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+.scratch-session .result-banner.win { border-color: #b7a356; background: var(--credits-bg); }
+.scratch-session .result-banner > strong { font-family: Georgia, serif; font-size: 24px; font-weight: 400; }
+.scratch-session .result-banner > p { margin-bottom: 0; }
+.symbol-illustration { width: 83%; height: 83%; overflow: visible; filter: drop-shadow(0 2px 0 #00000012); }
+
+@media (min-width: 1100px) { .ticket-catalogue .ticket-grid > :nth-child(3n + 2) .ticket-preview-link { transform: translateY(9px); } .ticket-catalogue .ticket-grid > :nth-child(3n + 2) .ticket-preview-link:hover { transform: translateY(4px) rotate(.7deg); } }
+@media (max-width: 1000px) { .ticket-catalogue .ticket-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 24px; } .ticket-play-layout { gap: 30px; grid-template-columns: minmax(210px, 270px) minmax(0, 1fr); } }
+@media (max-width: 720px) {
+  .ticket-play-layout { grid-template-columns: minmax(0, 1fr); max-width: 480px; margin-inline: auto; gap: 24px; }
+  .ticket-play-layout .scratch-sidebar { position: static; }
+  .ticket-play-layout .scratch-sidebar h1 { font-size: 2.4rem; margin-block: 7px 10px; }
+  .ticket-play-description { margin-bottom: 16px; }
+  .ticket-play-stats { margin-bottom: 16px; }
+  .ticket-play-rules { margin-top: 18px; }
+  .ticket-play-rules .symbol-row { display: none; }
+  .catalogue-heading { align-items: flex-start; flex-direction: column; gap: 15px; }
+}
+@media (max-width: 560px) {
+  .ticket-catalogue .ticket-grid { grid-template-columns: minmax(0, 1fr); max-width: 390px; margin-inline: auto; gap: 38px; }
+  .catalogue-heading { max-width: 390px; margin-inline: auto; }
+  .ticket-hero { padding: 17px 18px; }
+  .ticket-game-area { padding-inline: 14px; }
+  .ticket-play-layout .lottery-ticket .scratch-cell-shell { min-height: 22cqw; }
+  .ticket-stub { gap: 8px; padding-inline: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticket-preview-link, .ticket-pick-button, .scratch-cell-content { transition: none; }
+  .ticket-preview-link:hover { transform: none; }
+  .scratch-particle { display: none; }
+}

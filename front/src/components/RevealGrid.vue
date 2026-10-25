@@ -1,9 +1,13 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import ScratchCell from "./ScratchCell.vue";
+import LotteryTicket from "./LotteryTicket.vue";
+import { getTicketUi } from "../data/ticketRules";
 import { playJackpotSound, playLossSound, playWinSound } from "../utils/audio";
 
 const props = defineProps({
+  ticket: { type: Object, required: true },
+  gameId: { type: [Number, String], default: null },
   resultData: {
     type: Object,
     required: true,
@@ -56,32 +60,30 @@ watch(allRevealed, (isComplete) => {
 </script>
 
 <template>
-  <section class="scratch-panel">
-    <div class="scratch-heading">
-      <div>
-        <p class="eyebrow">Ticket actif</p>
-        <h2>{{ props.resultData.headline }}</h2>
-      </div>
-      <button type="button" class="button button-muted" @click="revealAll">
-        Tout reveler
+  <section class="scratch-session">
+    <div class="scratch-session-toolbar">
+      <span aria-live="polite">{{ revealedIds.size }} / {{ resultData.cells.length }} cases révélées</span>
+      <button type="button" :disabled="allRevealed" @click="revealAll">
+        Tout révéler
       </button>
     </div>
-
-    <div
-      class="reveal-grid"
-      :style="{ gridTemplateColumns: `repeat(${props.resultData.columns}, minmax(0, 1fr))` }"
-    >
-      <ScratchCell
-        v-for="cell in props.resultData.cells"
-        :key="cell.id"
-        :cell="cell"
-        :round-token="roundToken"
-        :force-reveal-token="forceRevealToken"
-        @revealed="revealCell"
-      />
-    </div>
-
-    <div v-if="allRevealed" class="result-banner" :class="{ win: props.resultData.rewardAmount > 0 }">
+    <LotteryTicket :ticket="ticket" :serial="gameId">
+      <div
+        class="reveal-grid"
+        :style="{ gridTemplateColumns: `repeat(${props.resultData.columns}, minmax(0, 1fr))` }"
+      >
+        <ScratchCell
+          v-for="cell in props.resultData.cells"
+          :key="cell.id"
+          :cell="cell"
+          :round-token="roundToken"
+          :foil-tone="getTicketUi(ticket.slug).foil"
+          :force-reveal-token="forceRevealToken"
+          @revealed="revealCell"
+        />
+      </div>
+    </LotteryTicket>
+    <div v-if="allRevealed" class="result-banner" :class="{ win: props.resultData.rewardAmount > 0 }" role="status" aria-live="polite">
       <strong>{{ props.resultData.rewardLabel }}</strong>
       <p>{{ props.resultData.summary }}</p>
     </div>

@@ -1,5 +1,7 @@
 front/node_modules/
 front/dist/
+front/test-results/
+front/playwright-report/
 back/node_modules/
 front/.env
 back/.env

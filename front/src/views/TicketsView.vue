@@ -16,11 +16,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="section-block">
-    <div class="section-heading">
-      <p class="eyebrow">Catalogue</p>
-      <h1>Choisis ton ticket a gratter</h1>
-      <p>Chaque ticket affiche maintenant sa regle de gain, ses symboles et son style de revelation.</p>
+  <section class="section-block ticket-catalogue">
+    <div class="catalogue-heading">
+      <div>
+        <p class="eyebrow">La collection ScratchWin</p>
+        <h1>La chance, au bout des doigts.</h1>
+        <p>Cinq univers, un même frisson. Choisis ton ticket, gratte les cases et découvre ce que la chance te réserve.</p>
+      </div>
+      <span v-if="ticketsStore.items.length" class="catalogue-count">{{ ticketsStore.items.length }} tickets à découvrir</span>
     </div>
 
     <p v-if="errorMessage" class="form-error">{{ errorMessage }}</p>

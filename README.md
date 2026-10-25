@@ -105,6 +105,13 @@ La procedure complete de deploiement et la configuration Nginx VPS sont dans [de
 
 ## Verification
 
+Le catalogue et l'ecran de grattage partagent le composant `LotteryTicket.vue`.
+Chaque ticket dispose d'une illustration SVG et d'un univers imprime : Flash
+electrique, Fortune royal, Jackpot a enseigne lumineuse, Mystere celeste et Lucky 7
+retro. Les prix et les gains affiches proviennent des donnees de l'API.
+Le revetement se gratte a la souris ou au doigt ; au clavier, utiliser Entree ou
+Espace sur une case, ou le bouton « Tout reveler ».
+
 Tests du moteur de jeu et du client HTTP (Node.js 22) :
 
 ```bash
@@ -112,6 +119,25 @@ npm --prefix back test
 npm --prefix front test
 npm --prefix front run build
 ```
+
+Tests navigateur du catalogue responsive et du grattage, avec une API simulee
+(aucune depense sur les comptes existants) :
+
+```bash
+cd front
+npx playwright install chromium
+npm run test:e2e
+```
+
+Sous Windows, Edge deja installe peut servir de navigateur de test :
+
+```powershell
+$env:PLAYWRIGHT_CHANNEL = "msedge"
+npm run test:e2e
+```
+
+Les tests demarrent un serveur temporaire sur `127.0.0.1:5174`, generent des captures
+dans `front/test-results/`, puis arretent le serveur. Ce dossier est ignore par Git.
 
 Tests avec une vraie base MySQL isolee, sans ports exposes ni volume persistant :
 
